@@ -66,7 +66,7 @@ public class RabbitClient {
 		return instance;
 	}
 	
-	public void post(Order order) throws IOException{
+	public synchronized void post(Order order) throws IOException{
 		if (senderConn==null || !senderConn.isOpen()){
 			senderConn = factory.newConnection();
 		}
@@ -76,7 +76,7 @@ public class RabbitClient {
 	    channel.close();		
 	}
 	
-	public QueueingConsumer consumeOrders() throws IOException{
+	public synchronized QueueingConsumer consumeOrders() throws IOException{
 		if (receiverConn==null || !receiverConn.isOpen()){
 			receiverConn = factory.newConnection();
 		}

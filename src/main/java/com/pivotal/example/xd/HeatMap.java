@@ -16,7 +16,7 @@ public class HeatMap implements Serializable {
 			   "nh", "al", "ar", "me", "hi", "ne", "id", "ri", "vt", "mt", "wv", "de", "ak", "ms", "wy", "sd", "nd",
 			   "pr", "as"};
 
-	static String commaSeparatedRGBPattern = "^(\\d{3}),(\\d{3}),(\\d{3})$";
+	static String commaSeparatedRGBPattern = "^(\\d{1,3}),(\\d{1,3}),(\\d{1,3})$";
     static final String hexaDecimalPattern = "^0x([\\da-fA-F]{1,8})$";
     static final int HEXLENGTH = 8;
 	 	
@@ -156,10 +156,13 @@ public class HeatMap implements Serializable {
         String hexForRGBConversion = "0x00073f07";
         String whiteHexForRGBConversion = "0x00ffffff";
  
+        String rgbToHex="85,123,85";
+        
         /** Convert from HEX to RGB */
-        System.out.println("RGB: "+convertHexToRGB(hexForRGBConversion));
-        System.out.println("RGB: "+convertHexToRGB(whiteHexForRGBConversion));
+        //System.out.println("RGB: "+convertHexToRGB(hexForRGBConversion));
+        //System.out.println("RGB: "+convertHexToRGB(whiteHexForRGBConversion));
          
+        System.out.println("Hex: "+convertRGBToHex(rgbToHex));
     }	
     
     
