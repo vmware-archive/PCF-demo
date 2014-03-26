@@ -37,8 +37,7 @@ public class HeatMap implements Serializable {
 	public HeatMap(){
 		heatMap = new TreeSet<HeatMapItem>();	
 	}
-	
-	
+		
 	public void assignColors(){
 		
 		HeatMapItem[] items = (HeatMapItem[])heatMap.toArray(new HeatMapItem[]{});

@@ -38,6 +38,10 @@ public class OrderController {
 	
 	static Logger logger = Logger.getLogger(OrderController.class);
 
+	OrderGenerator generator = new OrderGenerator();
+	Thread threadSender = new Thread (generator);
+	Thread threadConsumer = new Thread (new OrderConsumer());
+	
 	
     public OrderController(){
     	
@@ -46,7 +50,9 @@ public class OrderController {
     	for (int i=0; i<HeatMap.states.length; i++){
     		stateOrdersMap.put(HeatMap.states[i], new ArrayBlockingQueue<Order>(10));
     	}
-    	
+    	threadSender.start();
+    	threadConsumer.start();
+
     	
     }
 	
@@ -88,22 +94,30 @@ public class OrderController {
 
     }    	
     
-    @RequestMapping(value="/generateData")
-    public @ResponseBody String generateData(){
+    @RequestMapping(value="/startStream")
+    public @ResponseBody String startStream(){
 		logger.warn("Rabbit URI "+client.getRabbitURI());
 		if (client.getRabbitURI()==null) return "Please bind a RabbitMQ service";
     	
     	if (generatingData) return "Data already being generated";
-    	generatingData = true;
-    	Thread threadSender = new Thread (new OrderGenerator());
-    	threadSender.start();
-    	Thread threadConsumer = new Thread (new OrderConsumer());
-    	threadConsumer.start();
-
+    	
+    	generator.startGen();
     	return "Started";
 
     }    	
 
+    @RequestMapping(value="/stopStream")
+    public @ResponseBody String stopStream(){
+		logger.warn("Rabbit URI "+client.getRabbitURI());
+		if (client.getRabbitURI()==null) return "Please bind a RabbitMQ service";
+    	
+    	if (!generatingData) return "Not Streaming";
+    	generatingData = false;
+    	generator.stopGen();
+    	
+    	return "Stopped";
+
+    }    	
     
     @RequestMapping(value="/getHeatMap")
     public @ResponseBody HeatMap getHistograms(){

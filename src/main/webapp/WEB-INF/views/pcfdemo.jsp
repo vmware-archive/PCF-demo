@@ -1,4 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page session="false" %>
+
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -99,7 +101,8 @@
 	        </div>
 	        <div class="nav">
 	        	<input type="button" value="Orders US Heat Map" class="activate nav-link" >
-	        	<input type="button" value="Stream data" class="activate nav-link" onclick="autogenData();">
+	        	<input type="button" value="Start Data Stream" class="activate nav-link" onclick="startStream();">
+	        	<input type="button" value="Stop Data Stream" class="activate nav-link" onclick="stopStream();">
 	        	<input type="button" value="Login" class="activate nav-link" >
 	        	<input type="button" value="Logout" class="activate nav-link">
 	        </div>
@@ -111,7 +114,7 @@
         <small>Instance hosted at &nbsp;<%=request.getLocalAddr() %>:<%=request.getLocalPort() %></small><br>
 		<c:choose>
 			<c:when test="${rabbitURI != null}">
-				<small><b>Data being streamed from RabbitMQ URI:</b>&nbsp;<c:out value="${rabbitURI}"/> </small>				
+				<small>Data being streamed from RabbitMQ</small>				
 			</c:when>
 			<c:otherwise>
 				<small><b>No RabbitMQ service bound - streaming is not active</b> </small>	
@@ -119,9 +122,9 @@
 		</c:choose>
 		<br>
 		</div>
-		<div id="autogenMsg" align="center"> </div> 
-  		<div id="usmap" align="center" ></div>
-  
+		<div id="autogenMsg" align="center"> </div><br>
+		<div align="center"><b>Orders density per US State</b></div>
+  		<div id="usmap" align="center"></div>
   		<div id="stateOrders" align="center" ></div>
 	</div>  		
 	
@@ -143,8 +146,13 @@
 <script lang="javascript">//<![CDATA[ 
 
                                      
-function autogenData(){
-	$.get("generateData", function(data){
+function startStream(){
+	$.get("startStream", function(data){
+		$( "#autogenMsg" ).text( data ).show().fadeOut( 3000 );
+    });       
+}                                     
+function stopStream(){
+	$.get("stopStream", function(data){
 		$( "#autogenMsg" ).text( data ).show().fadeOut( 3000 );
     });       
 }                                     
