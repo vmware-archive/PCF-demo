@@ -119,6 +119,14 @@ public class OrderController {
 
     }    	
     
+    @RequestMapping(value="/killApp")
+    public @ResponseBody String kill(){
+		logger.warn("Killing application instance");
+		System.exit(-1);    	
+    	return "Killed";
+
+    }       
+    
     @RequestMapping(value="/getHeatMap")
     public @ResponseBody HeatMap getHistograms(){
     	HeatMap heatMap = new HeatMap();

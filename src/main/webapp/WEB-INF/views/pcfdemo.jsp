@@ -102,9 +102,7 @@
 	        <div class="nav">
 	        	<input type="button" value="Orders US Heat Map" class="activate nav-link" >
 	        	<input type="button" value="Start Data Stream" class="activate nav-link" onclick="startStream();">
-	        	<input type="button" value="Stop Data Stream" class="activate nav-link" onclick="stopStream();">
-	        	<input type="button" value="Login" class="activate nav-link" >
-	        	<input type="button" value="Logout" class="activate nav-link">
+	        	<input type="button" value="Kill App" class="activate nav-link" onclick="killApp();">
 	        </div>
 	    </div>
 	</div>
@@ -156,7 +154,12 @@ function stopStream(){
 		$( "#autogenMsg" ).text( data ).show().fadeOut( 3000 );
     });       
 }                                     
-                                     
+      
+function killApp(){
+	$.get("killApp", function(data){
+		$( "#autogenMsg" ).text( data ).show().fadeOut( 3000 );
+    });       
+}                       
 var hits = {};
 
 /*
