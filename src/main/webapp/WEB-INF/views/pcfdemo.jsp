@@ -121,7 +121,7 @@
 		<br>
 		</div>
 		<div id="autogenMsg" align="center"> </div><br>
-		<div align="center"><b>Orders density per US State</b></div>
+		<div align="center"><b>Orders density per US State (tip: click on a state for details)</b></div>
   		<div id="usmap" align="center"></div>
   		<div id="stateOrders" align="center" ></div>
 	</div>  		
