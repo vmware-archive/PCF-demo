@@ -63,6 +63,23 @@
 	</bean>
  
 	<context:property-placeholder location="classpath:app.properties" />
+	
+	<cloud:properties id="props"/>
+	
+	<cloud:data-source id="HawqDS" />
+	
+	<!-- 
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://${cloud.services.hawq.connection.hostname}:${cloud.services.hawq.connection.port}/${cloud.services.hawq.connection.name}" />
+		<property name="username" value="${cloud.services.hawq.connection.username}" />
+		<property name="password" value="${cloud.services.hawq.connection.password}" />
+	</bean>
+
+		 -->		
+	
+	
 <!-- 
 	<cloud:rabbit-connection-factory id="connectionFactory" service-name="myrabbitmq"/>	
 
