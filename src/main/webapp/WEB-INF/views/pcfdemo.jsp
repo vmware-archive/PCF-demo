@@ -121,7 +121,7 @@
 		<br>
 		</div>
 		<div id="autogenMsg" align="center"> </div><br>
-		<div align="center"><b>Orders density per US State (tip: click on a state for details)</b></div>
+		<div align="center"><b>Orders density per EU State (tip: click on a state for details)</b></div>
   		<div id="usmap" align="center"></div>
   		<div id="stateOrders" align="center" ></div>
 	</div>  		
@@ -219,9 +219,9 @@ var width = 960,
     height = 500,
     centered;
 
-var projection = d3.geo.albersUsa()
-    .scale(width)
-    .translate([0, 0]);
+var projection = d3.geo.mercator()
+.scale(3000)
+.translate([-100, 500]);
 
 var path = d3.geo.path()
     .projection(projection);
@@ -241,7 +241,7 @@ var g = svg.append("g")
   .append("g")
     .attr("id", "states");
 
-d3.json("resources/states.json", function(json) {
+d3.json("resources/eu.json", function(json) {
   var heatmap = d3.scale.linear()
     .domain([0,d3.max(json.features, function(d) { return Math.log(hits[d.properties.abbr] || 1); })])
     .interpolate(d3.interpolateRgb)

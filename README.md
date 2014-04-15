@@ -1,6 +1,8 @@
 PCF Demo
 =========
 
+This app in this branch shows the demo on a map of the European Union instead of the standard US map.
+
 Push the application initially with no service bound.
 Notice it will alert no RabbitMQ service is bound.. the link "Stream Data" will not work either.
 

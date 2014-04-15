@@ -11,10 +11,9 @@ import java.util.regex.Pattern;
 public class HeatMap implements Serializable {
 
 	public static String[] states = new String[] {
-			   "ca", "ny", "ma", "tx", "il", "wa", "fl", "pa", "va", "nj", "or", "oh", "mi", "co", "md", "nc", "ga", 
-			   "mn", "az", "in", "wi", "mo", "tn", "ct", "dc", "ut", "nm", "ks", "ky", "ok", "sc", "la", "nv", "ia", 
-			   "nh", "al", "ar", "me", "hi", "ne", "id", "ri", "vt", "mt", "wv", "de", "ak", "ms", "wy", "sd", "nd",
-			   "pr", "as"};
+			   "al", "at", "be", "bg", "bh", "ch", "cy", "cz", "de", "dk", "es", "et", "fi", "fr", "gr", "ca", "ho", 
+			   "ir", "is", "it", "ks", "lt", "lx", "lv", "mv", "md", "mt", "mn", "nl", "no", "pl", "pt", "ro", "sr", 
+			   "sk", "sl", "se", "uk"};
 
 	static String commaSeparatedRGBPattern = "^(\\d{1,3}),(\\d{1,3}),(\\d{1,3})$";
     static final String hexaDecimalPattern = "^0x([\\da-fA-F]{1,8})$";
