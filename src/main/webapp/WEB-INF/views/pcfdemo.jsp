@@ -100,7 +100,7 @@
 	          <img src="resources/img/BestRetailInc_Logo.png" alt="Best Retail, Inc.">
 	        </div>
 	        <div class="nav">
-	        	<input type="button" value="Orders US Heat Map" class="activate nav-link" >
+	        	<input type="button" value="Orders EU Heat Map" class="activate nav-link" >
 	        	<input type="button" value="Start Data Stream" class="activate nav-link" onclick="startStream();">
 	        	<input type="button" value="Kill App" class="activate nav-link" onclick="killApp();">
 	        </div>
