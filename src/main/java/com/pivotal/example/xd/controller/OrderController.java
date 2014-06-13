@@ -31,6 +31,8 @@ public class OrderController {
 	@Autowired
 	ServletContext context;
 	
+	
+	
 	private static Map<String,Queue<Order>> stateOrdersMap = new HashMap<String, Queue<Order>>();
 	private static RabbitClient client ;
 

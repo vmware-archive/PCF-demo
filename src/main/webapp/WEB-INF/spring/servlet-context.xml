@@ -26,7 +26,12 @@
 
 
 	<context:component-scan base-package="com.pivotal"/>
+    <context:annotation-config/>
+   
     <mvc:annotation-driven/>
+   
+    
+    
     <mvc:resources mapping="/resources/**" location="/resources/" />
     
 	<mvc:resources mapping="/resources/**" location="/resources/" />
@@ -66,7 +71,11 @@
 	
 	<cloud:properties id="props"/>
 	
-	<cloud:data-source id="HawqDS" />
+	
+	<!-- 
+	<cloud:data-source id="phd1" />
+	 -->
+	
 	
 	<!-- 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"

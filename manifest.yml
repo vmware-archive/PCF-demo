@@ -2,8 +2,8 @@
 applications:
 - name: pcfdemo
   memory: 512M 
-  instances: 3
-  host: pcfdemo
+  instances: 1
+  host: pcfdemophd
   path: ./target/pcfdemo.war
   services:
-    - rabbit
+    - phd1
