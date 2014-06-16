@@ -1,5 +1,8 @@
 package com.pivotal.example.xd.controller;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,6 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.servlet.ServletContext;
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.pivotal.example.xd.BootstrapDataPopulator;
+import com.pivotal.example.xd.DataSourceConnManager;
 import com.pivotal.example.xd.HeatMap;
 import com.pivotal.example.xd.Order;
 import com.pivotal.example.xd.OrderConsumer;
@@ -31,7 +37,7 @@ public class OrderController {
 	@Autowired
 	ServletContext context;
 	
-	
+
 	
 	private static Map<String,Queue<Order>> stateOrdersMap = new HashMap<String, Queue<Order>>();
 	private static RabbitClient client ;
@@ -78,6 +84,27 @@ public class OrderController {
 			orderQueue.remove();
 			orderQueue.add(order);
 		}				
+		// Persist to GemXD
+		DataSource ds = DataSourceConnManager.getInstance().getGemXDDataSource();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(BootstrapDataPopulator.INSERT_ORDER);
+			pstmt.setString(1, order.getState());
+			pstmt.setInt(2, order.getAmount());
+			pstmt.executeUpdate();
+			conn.commit();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally{
+			try{
+				if (conn!=null) conn.close();
+			}catch(Exception e){}
+		}
+		
 	}
     
 	@RequestMapping(value = "/")

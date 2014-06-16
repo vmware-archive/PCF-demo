@@ -1,7 +1,7 @@
 package com.pivotal.example.xd;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -9,15 +9,16 @@ import java.util.StringTokenizer;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.log4j.Logger;
 import org.cloudfoundry.runtime.env.CloudEnvironment;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pivotal.example.xd.controller.OrderController;
-import com.pivotal.gemfirexd.internal.jdbc.ClientConnectionPoolDataSource;
 
 @Service 
 public class BootstrapDataPopulator implements InitializingBean {
@@ -31,16 +32,18 @@ public class BootstrapDataPopulator implements InitializingBean {
 	String nameNode= null;
 	String dir = null;
 		
+	@Autowired 
+	private ApplicationContext applicationContext;	
 	
-	private static final String CREATE_DISK_STORE_DDL="" +
+	public static final String CREATE_DISK_STORE_DDL="" +
 			" CREATE HDFSSTORE streamingstore " +
 			" NameNode '_NAMENODE_' " +
-			" HomeDir '_DIR_' " + 
+			" HomeDir '/user/gfxd/' " + 
 			" BatchSize 10 "+
 			" QueuePersistent true "+
 			" MaxWriteOnlyFileSize 200;";
 			
-	private static final String CREATE_TABLE_DDL="" +
+	public static final String CREATE_TABLE_DDL="" +
 			" CREATE TABLE ORDERS " +
 			" (ORDER_ID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, " +
 			"  STATE VARCHAR(2) NOT NULL, " +
@@ -49,91 +52,20 @@ public class BootstrapDataPopulator implements InitializingBean {
 			" EXPIRE ENTRY WITH TIMETOLIVE 300 ACTION DESTROY "+
 			" HDFSSTORE (streamingstore) WRITEONLY;" ; 
 	
+	public static final String INSERT_ORDER="" +
+			" INSERT INTO ORDERS (STATE, VALUE) VALUES (?,?);" ; 
 	
 	
 	
     public BootstrapDataPopulator(){
 
-    	CloudEnvironment env = new CloudEnvironment();
-    	Map phdProps = env.getServiceDataByName("phd1");
-    	Iterator it = phdProps.keySet().iterator();
-    	while (it.hasNext()){
-    		String key = it.next().toString();
-    		
-    		logger.warn("phd1 - "+key+" : "+phdProps.get(key)+" "+phdProps.get(key).getClass());
-    	}
-    	
-    	try{
 
-    		Map phdCred = (Map)env.getServiceDataByName("phd1").get("credentials");
-    		Map gemXDCred = (Map)phdCred.get("gemfirexd");
-    		String uri = (String)gemXDCred.get("uri");
-    		
-    		StringTokenizer tokenizer = new StringTokenizer(uri, ";");
-    		gemXDURI = tokenizer.nextToken();
-    		gemXDUser = tokenizer.nextToken().substring(5);  // remove the "user=" string
-    		gemXDPass = tokenizer.nextToken().substring(9);  //  remove the "password=" string
-    		
-    		
-    		Map hdfsCred = (Map)phdCred.get("hdfs");
-    		Map hdfsConfig = (Map)hdfsCred.get("configuration");
-    		nameNode=(String)hdfsConfig.get("fs.defaultFS");
-    		dir=(String)hdfsCred.get("directory");
-    		
-    		
-    		logger.warn("GemXD URI: "+gemXDURI);
-    		logger.warn("GemXD User: "+gemXDUser);
-    		logger.warn("GemXD Password: "+gemXDPass);
-    		
-    		logger.warn("HDFS Config: "+hdfsConfig);
-    		logger.warn("Namenode: "+nameNode);
-    		logger.warn("dir: "+dir);
-    		
-    		
-    		
-    		
-    	}
-    	catch(Exception e){
-    		e.printStackTrace();
-    	}
-    	
-
-    	
-  /*  	
-    	try{
-    		Cloud cloud = new CloudFactory().getCloud();
-    		Properties props = cloud.getCloudProperties();
-    		Enumeration propEnum = props.keys();
-    		while (propEnum.hasMoreElements()){
-    			Object key = propEnum.nextElement();    			
-    			logger.warn(key+" : "+props.get(key));
-    		}
-    		
-	    	Iterator<ServiceInfo> services = cloud.getServiceInfos().iterator();
-	    	while (services.hasNext()){
-	    		ServiceInfo svc = services.next();
-	    		if (svc instanceof PostgresqlServiceInfo){
-	    			PostgresqlServiceInfo hawq = (PostgresqlServiceInfo)svc;	    				    			
-	    			
-	    		}
-	    	}
-    	}
-    	catch(CloudException ce){
-    		// means its not being deployed on Cloud
-    		logger.warn(ce.getMessage());
-    	}
-    	*/
+    
     }
     
 	private DataSource getDataSource() throws Exception{
-   		Properties props = new Properties();
-		props.setProperty("driverClassName","com.pivotal.gemfirexd.internal.jdbc.ClientConnectionPoolDataSource");
-		props.setProperty("url",gemXDURI);	
-		props.setProperty("username",gemXDUser);	
-		props.setProperty("password",gemXDPass);	
-		
-		
-		return BasicDataSourceFactory.createDataSource(props);
+
+		return DataSourceConnManager.getInstance().getGemXDDataSource();
  		
 		
 	}
@@ -144,30 +76,47 @@ public class BootstrapDataPopulator implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         logger.warn("Bootstrapping data...");
  
-        // Create HDFS Disk Store if not existing.
         if (ds==null){
-        	ds = getDataSource();
+        	ds = getDataSource();        	
+        	// make the DS available to other Spring beans.
+        	AutowireCapableBeanFactory factory = applicationContext.getAutowireCapableBeanFactory();
+        	factory.autowireBean(ds);
         }
         
-        //Connection conn = ds.getConnection(); 
-        ClientConnectionPoolDataSource ds = new ClientConnectionPoolDataSource();
-        Connection conn = DriverManager.getConnection(gemXDURI, gemXDUser, gemXDPass);
-        
+        Connection conn = ds.getConnection(); 
+        // Create HDFS Disk Store if not existing.        
         try{
         	String ddl = CREATE_DISK_STORE_DDL.replaceAll("_NAMENODE_", nameNode).replaceAll("_DIR_", dir);
         	logger.warn("EXECUTING DDL: "+ddl);
 	        conn.createStatement().executeUpdate(ddl);
-	        conn.commit();
 	        logger.warn("CREATED DISK STORE");
         }
         catch(Exception e){
-        	logger.fatal("Exception trying to create hdfs disk store", e);
-        	//e.printStackTrace();
+        	logger.warn("Exception trying to create hdfs disk store. Maybe it already exists?");
+        	logger.warn(e.getMessage());        	
         }
-        finally{
-        	conn.close();
+        
+        // check if table already exists
+        java.sql.DatabaseMetaData metadata = conn.getMetaData();
+       
+        ResultSet rs = metadata.getTables(null, null, "ORDERS", null);
+        if (rs.next()){
+        	logger.warn("ORDERS TABLE ALREADY EXISTS.. SKIPPING CREATION. ");	        
         }
-        // Create DB tables if not existing.
+        else{
+	        try{
+		        String ddl = CREATE_TABLE_DDL;
+	        	logger.warn("EXECUTING DDL: "+ddl);
+		        conn.createStatement().executeUpdate(ddl);
+		        logger.warn("CREATED TABLE");
+		        conn.commit();
+	        }
+	        catch(Exception e){
+	        	logger.fatal("Exception trying to create table", e);
+	        	//e.printStackTrace();
+	        }
+        }
+    	conn.close();
 
         logger.warn("...Bootstrapping completed");
     }

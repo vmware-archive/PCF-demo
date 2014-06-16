@@ -25,13 +25,16 @@
 	</properties>
 	<dependencies>
 
-		<dependency>
-		      <groupId>GemFireXD-client</groupId>  
-		       <artifactId>com.pivotal</artifactId>  
-		       <version>1.0</version> 
-		      <scope>system</scope>
-			  <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/gemfirexd-client.jar</systemPath>
-		</dependency>
+
+	<dependency>
+	      <groupId>GemFireXD-client</groupId>  
+	       <artifactId>com.pivotal</artifactId>  
+	       <version>1.0</version> 
+	      <scope>system</scope>
+		  <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/gemfirexd-client.jar</systemPath>
+	</dependency>
+		
+		
       <dependency>
           <groupId>org.springframework.amqp</groupId>
           <artifactId>spring-rabbit</artifactId>
