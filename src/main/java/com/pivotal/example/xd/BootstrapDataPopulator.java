@@ -23,7 +23,7 @@ import com.pivotal.example.xd.controller.OrderController;
 @Service 
 public class BootstrapDataPopulator implements InitializingBean {
 
-	static Logger logger = Logger.getLogger(OrderController.class);
+	static Logger logger = Logger.getLogger(BootstrapDataPopulator.class);
 	
 	private DataSource ds;
 	String gemXDURI = null;
@@ -32,8 +32,8 @@ public class BootstrapDataPopulator implements InitializingBean {
 	String nameNode= null;
 	String dir = null;
 		
-	@Autowired 
-	private ApplicationContext applicationContext;	
+	//@Autowired 
+	//private ApplicationContext applicationContext;	
 	
 	public static final String CREATE_DISK_STORE_DDL="" +
 			" CREATE HDFSSTORE streamingstore " +
@@ -79,21 +79,21 @@ public class BootstrapDataPopulator implements InitializingBean {
         if (ds==null){
         	ds = getDataSource();        	
         	// make the DS available to other Spring beans.
-        	AutowireCapableBeanFactory factory = applicationContext.getAutowireCapableBeanFactory();
-        	factory.autowireBean(ds);
+        	//AutowireCapableBeanFactory factory = applicationContext.getAutowireCapableBeanFactory();
+        	//factory.autowireBean(ds);
         }
         
         Connection conn = ds.getConnection(); 
+        nameNode = DataSourceConnManager.getInstance().getHDFSNameNode();
         // Create HDFS Disk Store if not existing.        
         try{
-        	String ddl = CREATE_DISK_STORE_DDL.replaceAll("_NAMENODE_", nameNode).replaceAll("_DIR_", dir);
+        	String ddl = CREATE_DISK_STORE_DDL.replaceAll("_NAMENODE_", nameNode);
         	logger.warn("EXECUTING DDL: "+ddl);
 	        conn.createStatement().executeUpdate(ddl);
 	        logger.warn("CREATED DISK STORE");
         }
         catch(Exception e){
-        	logger.warn("Exception trying to create hdfs disk store. Maybe it already exists?");
-        	logger.warn(e.getMessage());        	
+        	logger.fatal("Exception trying to create hdfs disk store. Maybe it already exists?",e);
         }
         
         // check if table already exists

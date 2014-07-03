@@ -20,6 +20,8 @@ public class DataSourceConnManager {
 
 	private DataSource gemXD;
 	private DataSource hawq;
+	
+	private String nameNode;
 
 
 
@@ -55,15 +57,18 @@ public class DataSourceConnManager {
     		
     		Map hdfsCred = (Map)phdCred.get("hdfs");
     		Map hdfsConfig = (Map)hdfsCred.get("configuration");
-    		String nameNode=(String)hdfsConfig.get("fs.defaultFS");
+    		nameNode=(String)hdfsConfig.get("fs.defaultFS");
     		
     		
     		Map hawqCred = (Map)phdCred.get("hawq");
     		uri = (String)hawqCred.get("uri");    		
-    		tokenizer = new StringTokenizer(uri, ";");
+    		tokenizer = new StringTokenizer(uri, "?");
+    		
     		String hawqURI = tokenizer.nextToken();
-    		String hawqUser = tokenizer.nextToken().substring(9);  // remove the "username=" string
-    		String hawqPass = tokenizer.nextToken().substring(9);  //  remove the "password=" string
+    		String userPass = tokenizer.nextToken();
+
+    		String hawqUser = userPass.substring(0,userPass.indexOf("&")).substring(5);
+    		String hawqPass = userPass.substring(userPass.indexOf("&")+1).substring(9); 
     		
     		
     		
@@ -98,12 +103,16 @@ public class DataSourceConnManager {
     		
     	}
     	catch(Exception e){
+    		logger.fatal("Exception ",e);
     		e.printStackTrace();
     	}
     	
 		
 	}
 
+	public String getHDFSNameNode(){
+		return nameNode;
+	}
 	    
 	public DataSource getGemXDDataSource(){
 		return gemXD;
