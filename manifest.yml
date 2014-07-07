@@ -7,3 +7,5 @@ applications:
   path: ./target/pcfdemo.war
   services:
     - phd1
+    - rabbit-test
+

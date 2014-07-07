@@ -2,6 +2,7 @@ package com.pivotal.example.xd.controller;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -143,7 +144,6 @@ public class OrderController {
     	if (!generatingData) return "Not Streaming";
     	generatingData = false;
     	generator.stopGen();
-    	
     	return "Stopped";
 
     }    	
@@ -154,7 +154,34 @@ public class OrderController {
 		System.exit(-1);    	
     	return "Killed";
 
-    }       
+    }  
+    
+    @RequestMapping(value="/getOrders")
+    public @ResponseBody String getOrders(){
+		logger.warn("getOrders Called");
+		try {
+			DataSource ds = DataSourceConnManager.getInstance().getGemXDDataSource();
+			Connection conn = null;
+			conn = ds.getConnection();
+			//java.sql.DatabaseMetaData metadata = conn.getMetaData();
+			//ResultSet rs = metadata.getTables(null, null, "ORDERS", null);
+			PreparedStatement pstmt = conn.prepareStatement(BootstrapDataPopulator.SELECT_ORDER);
+			ResultSet rs = pstmt.executeQuery();
+			logger.warn("Result Size: " + rs.getFetchSize());
+			while (rs.next()){
+				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+					logger.warn(rs.getMetaData().getColumnName(i) + "\t" + rs.getString(i));
+				}
+
+				
+			}
+
+		}catch (Exception e) {
+			logger.error("Could not get Data from GemXD Table " + e);
+		}
+    	return "Logged data from Gem table";
+
+    } 
     
     @RequestMapping(value="/getHeatMap")
     public @ResponseBody HeatMap getHistograms(){

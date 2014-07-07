@@ -31,7 +31,7 @@
 	       <artifactId>com.pivotal</artifactId>  
 	       <version>1.0</version> 
 	      <scope>system</scope>
-		  <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/gemfirexd-client.jar</systemPath>
+		  <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/gemfirexd-1.0.6.jar</systemPath>
 	</dependency>
 		
 		

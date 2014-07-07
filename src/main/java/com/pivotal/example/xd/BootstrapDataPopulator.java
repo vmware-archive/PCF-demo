@@ -49,13 +49,27 @@ public class BootstrapDataPopulator implements InitializingBean {
 			"  STATE VARCHAR(2) NOT NULL, " +
 			"  VALUE INT NOT NULL ) " +
 			" PARTITION BY PRIMARY KEY " +
-			" EXPIRE ENTRY WITH TIMETOLIVE 300 ACTION DESTROY "+
+			//" EXPIRE ENTRY WITH TIMETOLIVE 300 ACTION DESTROY "+
 			" HDFSSTORE (streamingstore) WRITEONLY;" ; 
 	
 	public static final String INSERT_ORDER="" +
 			" INSERT INTO ORDERS (STATE, VALUE) VALUES (?,?);" ; 
 	
+	public static final String SELECT_ORDER="" +
+			" select STATE,sum(VALUE) AS \"SUM\" from orders group by STATE" ; 	
 	
+	public static final String CREATE_HAWQ_TABLE_DDL="" +
+			" CREATE TABLE customers " +
+			"( " +
+			"customer_id TEXT," +
+			"first_name TEXT," +
+			"last_name TEXT," +
+			"gender TEXT" +
+			") " +
+			"WITH (appendonly=true, compresstype=quicklz) DISTRIBUTED RANDOMLY;" ;
+	
+	public static final String INSERT_CUSTOMER="" +
+			" INSERT INTO CUSTOMERS (customer_id, first_name, last_name, gender) VALUES (?,?,?,?);" ;
 	
     public BootstrapDataPopulator(){
 
@@ -69,7 +83,10 @@ public class BootstrapDataPopulator implements InitializingBean {
  		
 		
 	}
-	    
+	 
+	private DataSource getHawqDataSource() throws Exception {
+		return DataSourceConnManager.getInstance().getHawqDataSource();
+	}
     
     @Transactional
     @Override
@@ -117,7 +134,20 @@ public class BootstrapDataPopulator implements InitializingBean {
 	        }
         }
     	conn.close();
-
+    	//Creating a HAWQ Table
+    	ds = getHawqDataSource();
+    	conn = ds.getConnection();
+    	try {
+    		String ddl = CREATE_HAWQ_TABLE_DDL;
+        	logger.warn("EXECUTING DDL: "+ddl);
+	        conn.createStatement().executeUpdate(ddl);
+	        logger.warn("CREATED TABLE");
+	        
+    		
+    	} catch (Exception e) {
+    		logger.error("Error creating HAWQ table", e);
+    	}
+    		
         logger.warn("...Bootstrapping completed");
     }
 
