@@ -167,13 +167,9 @@ public class OrderController {
 			//ResultSet rs = metadata.getTables(null, null, "ORDERS", null);
 			PreparedStatement pstmt = conn.prepareStatement(BootstrapDataPopulator.SELECT_ORDER);
 			ResultSet rs = pstmt.executeQuery();
-			logger.warn("Result Size: " + rs.getFetchSize());
 			while (rs.next()){
-				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-					logger.warn(rs.getMetaData().getColumnName(i) + "\t" + rs.getString(i));
-				}
-
-				
+				logger.warn("Row Num: " + rs.getRow());
+				logger.warn(Integer.parseInt(rs.getString("SUM")) +  "\t" + rs.getString("STATE"));	
 			}
 
 		}catch (Exception e) {

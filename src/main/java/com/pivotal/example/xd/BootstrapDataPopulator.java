@@ -71,6 +71,12 @@ public class BootstrapDataPopulator implements InitializingBean {
 	public static final String INSERT_CUSTOMER="" +
 			" INSERT INTO CUSTOMERS (customer_id, first_name, last_name, gender) VALUES (?,?,?,?);" ;
 	
+	public static final String SELECT_CUSTOMER_LNAME="" +
+			"SELECT * FROM CUSTOMERS WHERE LAST_NAME=(?);";
+	
+	public static final String SELECT_CUSTOMERS="" +
+			"SELECT * FROM CUSTOMERS;";
+	
     public BootstrapDataPopulator(){
 
 
