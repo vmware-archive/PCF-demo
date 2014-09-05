@@ -111,7 +111,7 @@
 		<div align="center"> 
         <small>Instance hosted at &nbsp;<%=request.getLocalAddr() %>:<%=request.getLocalPort() %></small><br>
 		<c:choose>
-			<c:when test="${rabbitURI != null}">
+			<c:when test="${rabbitBound}">
 				<small>Data being streamed from RabbitMQ</small>				
 			</c:when>
 			<c:otherwise>

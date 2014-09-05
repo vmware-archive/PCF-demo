@@ -1,76 +1,42 @@
 package com.pivotal.example.xd;
 
 import java.io.IOException;
-import java.util.Iterator;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
-import org.springframework.cloud.Cloud;
-import org.springframework.cloud.CloudException;
-import org.springframework.cloud.CloudFactory;
-import org.springframework.cloud.service.ServiceInfo;
-import org.springframework.cloud.service.common.RabbitServiceInfo;
+import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 
+@Service
 public class RabbitClient {
 
 	static Logger logger = Logger.getLogger(RabbitClient.class);
-	private static RabbitClient instance;
 	
 	private static final String QUEUE_NAME="ORDERS_QUEUE";
 
-	private ConnectionFactory factory;
+	private @Autowired(required=false) ConnectionFactory factory;
 	private Connection senderConn;
 	private Connection receiverConn;
-	private String rabbitURI;
 	
-	private RabbitClient(){
-		
-    	try{
-    		Cloud cloud = new CloudFactory().getCloud();
-	    	Iterator<ServiceInfo> services = cloud.getServiceInfos().iterator();
-	    	while (services.hasNext()){
-	    		ServiceInfo svc = services.next();
-	    		if (svc instanceof RabbitServiceInfo){
-	    			RabbitServiceInfo rabbitSvc = ((RabbitServiceInfo)svc);	    			
-	    			rabbitURI=rabbitSvc.getUri();
-	    			
-	    			try{
-	    				factory = new ConnectionFactory();
-	    				factory.setUri(rabbitURI);
-	    				senderConn = factory.newConnection();
-	    				receiverConn = factory.newConnection();
-	    			}
-	    			catch(Exception e){
-	    				throw new RuntimeException("Exception connecting to RabbitMQ",e);
-	    			}
-	    			
-	    		}
-	    	}
-    	}
-    	catch(CloudException ce){
-    		// means its not being deployed on Cloud
-    		logger.warn(ce.getMessage());
-    	}
-		
-		
-	}
-	
-	public static synchronized RabbitClient getInstance(){
-		if (instance==null){
-			instance = new RabbitClient(); 
+	@PostConstruct
+	public void init() {
+		if (factory != null) {
+			senderConn = factory.createConnection();
+			receiverConn = factory.createConnection();
 		}
-		return instance;
 	}
 	
 	public synchronized void post(Order order) throws IOException{
 		if (senderConn==null || !senderConn.isOpen()){
-			senderConn = factory.newConnection();
+			senderConn = factory.createConnection();
 		}
-		Channel channel = senderConn.createChannel();
+		Channel channel = senderConn.createChannel(false);
 		channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 	    channel.basicPublish("", QUEUE_NAME, null, order.toBytes());
 	    channel.close();		
@@ -78,9 +44,9 @@ public class RabbitClient {
 	
 	public synchronized QueueingConsumer consumeOrders() throws IOException{
 		if (receiverConn==null || !receiverConn.isOpen()){
-			receiverConn = factory.newConnection();
+			receiverConn = factory.createConnection();
 		}
-		Channel channel = receiverConn.createChannel();
+		Channel channel = receiverConn.createChannel(false);
 	    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 	    QueueingConsumer consumer = new QueueingConsumer(channel);
 	    channel.basicConsume(QUEUE_NAME, true, consumer);
@@ -88,10 +54,6 @@ public class RabbitClient {
 	}
 	
 	public boolean isBound(){
-		return (rabbitURI!=null);
-	}
-	
-	public String getRabbitURI(){
-		return rabbitURI;
+		return factory!=null;
 	}
 }

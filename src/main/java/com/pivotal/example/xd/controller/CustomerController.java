@@ -3,27 +3,24 @@ package com.pivotal.example.xd.controller;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 
 import com.pivotal.example.xd.BootstrapDataPopulator;
 import com.pivotal.example.xd.Customer;
-import com.pivotal.example.xd.DataSourceConnManager;
 
 @Controller
 public class CustomerController {
-	@Autowired
-	ServletContext context;
+	@Autowired @Qualifier("hawqDataSource") DataSource hawqDataSource;
+
 	static Logger logger = Logger.getLogger(CustomerController.class);
 
 	@RequestMapping("/getCustomer")
@@ -31,9 +28,8 @@ public class CustomerController {
 		//get Customer from HAWQ table
 		Customer cust = null;
 		try {
-			DataSource ds = DataSourceConnManager.getInstance().getHawqDataSource();
 			Connection conn = null;
-			conn = ds.getConnection();
+			conn = hawqDataSource.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(BootstrapDataPopulator.SELECT_CUSTOMER_LNAME);
 			pstmt.setString(1, last_name);
 			ResultSet rs = pstmt.executeQuery();
@@ -56,9 +52,7 @@ public class CustomerController {
 		//get all Customers from HAWQ table
 		String cust = "";
 		try {
-			DataSource ds = DataSourceConnManager.getInstance().getHawqDataSource();
-			Connection conn = null;
-			conn = ds.getConnection();
+			Connection conn = hawqDataSource.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(BootstrapDataPopulator.SELECT_CUSTOMERS);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()){

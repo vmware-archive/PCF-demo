@@ -6,6 +6,6 @@ applications:
   host: pcfdemophd
   path: ./target/pcfdemo.war
   services:
-    - phd1
-    - rabbit-test
+    - phd-service
+    - rabbit-service
 

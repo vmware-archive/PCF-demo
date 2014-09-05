@@ -3,8 +3,14 @@ package com.pivotal.example.xd;
 import java.io.IOException;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class OrderGenerator implements Runnable {
 
+	@Autowired RabbitClient rabbitClient;
+	
 	private boolean generating = false;
 	
 	public void startGen(){
@@ -17,8 +23,6 @@ public class OrderGenerator implements Runnable {
 	
 	@Override
 	public void run() {
-
-		RabbitClient client = RabbitClient.getInstance();
 		while (true){
 			if (generating){
 				Random random = new Random();
@@ -28,7 +32,7 @@ public class OrderGenerator implements Runnable {
 				order.setAmount(value);
 				order.setState(state);
 				try {
-					client.post(order);
+					rabbitClient.post(order);
 				} catch (IOException e1) {
 					throw new RuntimeException(e1);
 				}

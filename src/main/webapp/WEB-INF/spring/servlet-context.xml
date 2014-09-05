@@ -19,8 +19,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration/twitter http://www.springframework.org/schema/integration/twitter/spring-integration-twitter.xsd
 		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/cloud http://www.springframework.org/schema/cloud/spring-cloud.xsd"
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
 		>
 	
 
@@ -68,9 +67,6 @@
 	</bean>
  
 	<context:property-placeholder location="classpath:app.properties" />
-	
-	<cloud:properties id="props"/>
-	
 	
 	<!-- 
 	<cloud:data-source id="phd1" />

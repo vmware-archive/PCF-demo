@@ -2,30 +2,25 @@ package com.pivotal.example.xd;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
 
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.cloudfoundry.runtime.env.CloudEnvironment;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.pivotal.example.xd.controller.OrderController;
 
 @Service 
 public class BootstrapDataPopulator implements InitializingBean {
 
+	@Autowired @Qualifier("hawqDataSource") DataSource hawqDataSource;
+	@Autowired @Qualifier("gemfirexdDataSource") DataSource gemfirexdDataSource;
+	@Autowired org.apache.hadoop.conf.Configuration hadoopConfiguration;
+	
 	static Logger logger = Logger.getLogger(BootstrapDataPopulator.class);
 	
-	private DataSource ds;
 	String gemXDURI = null;
 	String gemXDUser = null;
 	String gemXDPass = null;
@@ -77,37 +72,13 @@ public class BootstrapDataPopulator implements InitializingBean {
 	public static final String SELECT_CUSTOMERS="" +
 			"SELECT * FROM CUSTOMERS;";
 	
-    public BootstrapDataPopulator(){
-
-
-    
-    }
-    
-	private DataSource getDataSource() throws Exception{
-
-		return DataSourceConnManager.getInstance().getGemXDDataSource();
- 		
-		
-	}
-	 
-	private DataSource getHawqDataSource() throws Exception {
-		return DataSourceConnManager.getInstance().getHawqDataSource();
-	}
-    
     @Transactional
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.warn("Bootstrapping data...");
  
-        if (ds==null){
-        	ds = getDataSource();        	
-        	// make the DS available to other Spring beans.
-        	//AutowireCapableBeanFactory factory = applicationContext.getAutowireCapableBeanFactory();
-        	//factory.autowireBean(ds);
-        }
-        
-        Connection conn = ds.getConnection(); 
-        nameNode = DataSourceConnManager.getInstance().getHDFSNameNode();
+        Connection conn = gemfirexdDataSource.getConnection(); 
+        nameNode = hadoopConfiguration.get("fs.defaultFS").toString();
         // Create HDFS Disk Store if not existing.        
         try{
         	String ddl = CREATE_DISK_STORE_DDL.replaceAll("_NAMENODE_", nameNode);
@@ -141,8 +112,7 @@ public class BootstrapDataPopulator implements InitializingBean {
         }
     	conn.close();
     	//Creating a HAWQ Table
-    	ds = getHawqDataSource();
-    	conn = ds.getConnection();
+    	conn = hawqDataSource.getConnection();
     	try {
     		String ddl = CREATE_HAWQ_TABLE_DDL;
         	logger.warn("EXECUTING DDL: "+ddl);
