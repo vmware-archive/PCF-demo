@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -33,6 +34,7 @@ import com.pivotal.example.xd.RabbitClient;
  */
 @Controller
 public class OrderController {
+	static Logger logger = Logger.getLogger(OrderController.class);
 	
 	@Autowired @Qualifier("gemfirexdDataSource") DataSource gemfirexdDataSource;
 	@Autowired private RabbitClient rabbitClient;
@@ -41,24 +43,22 @@ public class OrderController {
 	
 	private static Map<String,Queue<Order>> stateOrdersMap = new HashMap<String, Queue<Order>>();
 
-
 	boolean generatingData = false;
-	
-	static Logger logger = Logger.getLogger(OrderController.class);
-
-	Thread threadSender = new Thread (orderGenerator);
-	Thread threadConsumer = new Thread (orderConsumer);
-	
 	
     public OrderController(){
     	
     	for (int i=0; i<HeatMap.states.length; i++){
     		stateOrdersMap.put(HeatMap.states[i], new ArrayBlockingQueue<Order>(10));
     	}
-    	threadSender.start();
-    	threadConsumer.start();
+    }
+    
+    @PostConstruct
+    public void init() {
+	    	Thread threadSender = new Thread (orderGenerator);
+	    	Thread threadConsumer = new Thread (orderConsumer);
 
-    	
+	    	threadSender.start();
+	    	threadConsumer.start();
     }
 	
 	private int getOrderSum(String state){

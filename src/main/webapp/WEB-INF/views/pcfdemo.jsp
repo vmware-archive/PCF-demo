@@ -659,7 +659,7 @@ function click(d) {
 		        chart2.chartSeries[Name] = data;
 		    }
 	    });       
-		setTimeout(updateData, 50);
+		setTimeout(updateData, 5000);
 		
 	};          
 	/*
