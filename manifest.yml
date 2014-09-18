@@ -1,9 +1,7 @@
 ---
 applications:
-- name: heatmap
-  memory: 1G 
+- name: pcfdemo
+  memory: 512M 
   instances: 1
-  host: euro-retailer
+  host: euro-retailer${random-word}
   path: ./target/pcfdemo.war
-  services:
-    - rabbit
