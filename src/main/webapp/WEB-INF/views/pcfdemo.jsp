@@ -128,15 +128,15 @@
 	
     <div class="container">
         <div class="footer">
-          <div class="footer-text">©&nbsp;2014 Pivotal Software, Inc.  </div>
+          <div class="footer-text">Â©&nbsp;2014 Pivotal Software, Inc.  </div>
           <div class="footer-poweredby"><img src="resources/img/PoweredByPivotal.png" alt="Powered By Pivotal "></div>
 	    </div>
 	</div>  		
   		
 
 
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="http://d3js.org/d3.v2.min.js?2.9.6"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
 <script src="resources/js/rainbowvis.js"></script>
 
 <script src="/resources/js/histograms.js"></script>
