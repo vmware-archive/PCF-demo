@@ -9,6 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,8 +80,16 @@ public class OrderController {
 	}
     
 	@RequestMapping(value = "/")
-	public String home(Model model) {
-		model.addAttribute("rabbitURI", client.getRabbitURI());	
+	public String home(Model model) throws Exception{
+		model.addAttribute("rabbitURI", client.getRabbitURI());
+		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		
+		//add details about VCAP APPLICATION
+		Map vcapMap = mapper.readValue(System.getenv("VCAP_APPLICATION"), Map.class);
+		model.addAttribute("vcap_app", vcapMap);
+		
         return "WEB-INF/views/pcfdemo.jsp";
     }
 
