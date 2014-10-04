@@ -4,27 +4,39 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.AnonymousQueue;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.CloudException;
 import org.springframework.cloud.CloudFactory;
 import org.springframework.cloud.service.ServiceInfo;
 import org.springframework.cloud.service.common.RabbitServiceInfo;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
+import com.pivotal.example.xd.controller.OrderController;
 import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
 
 public class RabbitClient {
 
 	static Logger logger = Logger.getLogger(RabbitClient.class);
 	private static RabbitClient instance;
+	private CachingConnectionFactory ccf;
+	private Queue orderQueue;
+	private RabbitTemplate rabbitTemplate;
 	
-	private static final String QUEUE_NAME="ORDERS_QUEUE";
+	private static final String EXCHANGE_NAME="ORDERS_EXCHANGE";
 
-	private ConnectionFactory factory;
-	private Connection senderConn;
-	private Connection receiverConn;
+	Connection connection;
 	private String rabbitURI;
 	
 	private RabbitClient(){
@@ -39,10 +51,29 @@ public class RabbitClient {
 	    			rabbitURI=rabbitSvc.getUri();
 	    			
 	    			try{
-	    				factory = new ConnectionFactory();
+	    				
+	    				ConnectionFactory factory = new ConnectionFactory();
 	    				factory.setUri(rabbitURI);
-	    				senderConn = factory.newConnection();
-	    				receiverConn = factory.newConnection();
+	    				ccf = new CachingConnectionFactory(factory);
+	    				
+	    				connection = ccf.createConnection();
+	    
+	    				FanoutExchange fanoutExchange = new FanoutExchange(EXCHANGE_NAME, false, true);
+	    				
+	    				RabbitAdmin rabbitAdmin = new RabbitAdmin(ccf);
+	    				
+	    				rabbitAdmin.declareExchange(fanoutExchange);
+	    				
+	    				orderQueue = new AnonymousQueue();
+	    				rabbitAdmin.declareQueue(orderQueue);
+	    				rabbitAdmin.declareBinding(BindingBuilder.bind(orderQueue).to(fanoutExchange));
+	    				
+	    				rabbitTemplate = rabbitAdmin.getRabbitTemplate();
+	    				rabbitTemplate.setExchange(EXCHANGE_NAME);
+	    				rabbitTemplate.setConnectionFactory(ccf);
+	    				
+	    				rabbitTemplate.afterPropertiesSet();
+	    					    				
 	    			}
 	    			catch(Exception e){
 	    				throw new RuntimeException("Exception connecting to RabbitMQ",e);
@@ -67,25 +98,27 @@ public class RabbitClient {
 	}
 	
 	public synchronized void post(Order order) throws IOException{
-		if (senderConn==null || !senderConn.isOpen()){
-			senderConn = factory.newConnection();
-		}
-		Channel channel = senderConn.createChannel();
-		channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-	    channel.basicPublish("", QUEUE_NAME, null, order.toBytes());
-	    channel.close();		
+		
+		rabbitTemplate.send(new Message(order.toBytes(), new MessageProperties()));
+	}
+
+	public void startMessageListener(){
+		
+		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(ccf);		
+		container.setQueues(orderQueue);
+		container.setMessageListener(new MessageListener() {
+			
+			@Override
+			public void onMessage(Message message) {
+				OrderController.registerOrder(Order.fromBytes(message.getBody()));
+			}
+		});
+		container.setAcknowledgeMode(AcknowledgeMode.AUTO);
+		container.start();
+		
+		
 	}
 	
-	public synchronized QueueingConsumer consumeOrders() throws IOException{
-		if (receiverConn==null || !receiverConn.isOpen()){
-			receiverConn = factory.newConnection();
-		}
-		Channel channel = receiverConn.createChannel();
-	    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-	    QueueingConsumer consumer = new QueueingConsumer(channel);
-	    channel.basicConsume(QUEUE_NAME, true, consumer);
-	    return consumer;
-	}
 	
 	public boolean isBound(){
 		return (rabbitURI!=null);

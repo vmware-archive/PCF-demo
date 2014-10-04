@@ -6,6 +6,7 @@ import java.util.Random;
 public class OrderGenerator implements Runnable {
 
 	private boolean generating = false;
+	private boolean stopped = false;
 	
 	public void startGen(){
 		this.generating = true;
@@ -19,7 +20,7 @@ public class OrderGenerator implements Runnable {
 	public void run() {
 
 		RabbitClient client = RabbitClient.getInstance();
-		while (true){
+		while (!stopped){
 			if (generating){
 				Random random = new Random();
 				String state = HeatMap.states[random.nextInt(HeatMap.states.length)];
@@ -39,10 +40,15 @@ public class OrderGenerator implements Runnable {
 				}catch(Exception e){ return; }
 			}
 		try{
-			   Thread.sleep(50);
+			   Thread.sleep(100);
 		   }
 		   catch(Exception e){ return; }
 		}
+		
+	}
+	
+	public void shutdown(){
+		stopped = true;
 		
 	}
 

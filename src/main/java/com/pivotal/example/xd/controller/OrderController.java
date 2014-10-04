@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import javax.annotation.PreDestroy;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pivotal.example.xd.HeatMap;
 import com.pivotal.example.xd.Order;
-import com.pivotal.example.xd.OrderConsumer;
 import com.pivotal.example.xd.OrderGenerator;
 import com.pivotal.example.xd.RabbitClient;
 
@@ -41,8 +41,6 @@ public class OrderController {
 
 	OrderGenerator generator = new OrderGenerator();
 	Thread threadSender = new Thread (generator);
-	Thread threadConsumer = new Thread (new OrderConsumer());
-	
 	
     public OrderController(){
     	
@@ -51,9 +49,12 @@ public class OrderController {
     	for (int i=0; i<HeatMap.states.length; i++){
     		stateOrdersMap.put(HeatMap.states[i], new ArrayBlockingQueue<Order>(10));
     	}
-    	threadSender.start();
-    	threadConsumer.start();
-
+    	
+    	if(client.getRabbitURI() != null){
+    		threadSender.start();
+        	client.startMessageListener();	
+    	}
+    	
     	
     }
 	
@@ -87,8 +88,10 @@ public class OrderController {
 		
 		
 		//add details about VCAP APPLICATION
-		Map vcapMap = mapper.readValue(System.getenv("VCAP_APPLICATION"), Map.class);
-		model.addAttribute("vcap_app", vcapMap);
+		if(System.getenv("VCAP_APPLICATION") != null){
+			Map vcapMap = mapper.readValue(System.getenv("VCAP_APPLICATION"), Map.class);
+			model.addAttribute("vcap_app", vcapMap);
+		}
 		
         return "WEB-INF/views/pcfdemo.jsp";
     }
@@ -109,6 +112,8 @@ public class OrderController {
 		if (client.getRabbitURI()==null) return "Please bind a RabbitMQ service";
     	
     	if (generatingData) return "Data already being generated";
+    	
+    	generatingData = true;
     	
     	generator.startGen();
     	return "Started";
@@ -146,7 +151,14 @@ public class OrderController {
     	heatMap.assignColors();
     	return heatMap;
 
-    }    	
+    }
+    
+    
+    @PreDestroy
+    public void shutdownThread(){
+    	
+    	generator.shutdown();
+    }
 
 
 }
