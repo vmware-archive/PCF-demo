@@ -51,7 +51,6 @@ public class RabbitClient {
 	    		if (svc instanceof RabbitServiceInfo){
 	    			RabbitServiceInfo rabbitSvc = ((RabbitServiceInfo)svc);	    			
 	    			rabbitURI=rabbitSvc.getUri();
-	    			rabbitURI="amqp://guest:guest@rabbitmq:5672";
 	    			try{
 	    				
 	    				ConnectionFactory factory = new ConnectionFactory();
