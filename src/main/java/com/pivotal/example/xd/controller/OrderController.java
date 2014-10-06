@@ -52,7 +52,8 @@ public class OrderController {
     	
     	if(client.getRabbitURI() != null){
     		threadSender.start();
-        	client.startMessageListener();	
+        	client.startMessageListener();
+        	client.startOrderProcessing();
     	}
     	
     	

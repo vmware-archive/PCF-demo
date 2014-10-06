@@ -32,9 +32,11 @@ public class RabbitClient {
 	private static RabbitClient instance;
 	private CachingConnectionFactory ccf;
 	private Queue orderQueue;
+	private Queue orderProcQueue;
 	private RabbitTemplate rabbitTemplate;
 	
 	private static final String EXCHANGE_NAME="ORDERS_EXCHANGE";
+	private static final String ORDER_PROCESSING_QUEUE = "ORDERS_QUEUE";
 
 	Connection connection;
 	private String rabbitURI;
@@ -49,7 +51,7 @@ public class RabbitClient {
 	    		if (svc instanceof RabbitServiceInfo){
 	    			RabbitServiceInfo rabbitSvc = ((RabbitServiceInfo)svc);	    			
 	    			rabbitURI=rabbitSvc.getUri();
-	    			
+	    			rabbitURI="amqp://guest:guest@rabbitmq:5672";
 	    			try{
 	    				
 	    				ConnectionFactory factory = new ConnectionFactory();
@@ -67,6 +69,11 @@ public class RabbitClient {
 	    				orderQueue = new AnonymousQueue();
 	    				rabbitAdmin.declareQueue(orderQueue);
 	    				rabbitAdmin.declareBinding(BindingBuilder.bind(orderQueue).to(fanoutExchange));
+	    				
+	    				orderProcQueue = new Queue(ORDER_PROCESSING_QUEUE);
+	    				rabbitAdmin.declareQueue(orderProcQueue);
+	    				rabbitAdmin.declareBinding(BindingBuilder.bind(orderProcQueue).to(fanoutExchange));
+	    				
 	    				
 	    				rabbitTemplate = rabbitAdmin.getRabbitTemplate();
 	    				rabbitTemplate.setExchange(EXCHANGE_NAME);
@@ -118,6 +125,26 @@ public class RabbitClient {
 		
 		
 	}
+
+	public void startOrderProcessing(){
+		
+		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(ccf);		
+		container.setQueues(orderProcQueue);
+		container.setMessageListener(new MessageListener() {
+			
+			@Override
+			public void onMessage(Message message) {
+				//for now simply log the order
+				Order order = Order.fromBytes(message.getBody());
+				logger.info("Process Order: " + order.getState()+":"+order.getAmount());
+			}
+		});
+		container.setAcknowledgeMode(AcknowledgeMode.AUTO);
+		container.start();
+		
+		
+	}
+
 	
 	
 	public boolean isBound(){
