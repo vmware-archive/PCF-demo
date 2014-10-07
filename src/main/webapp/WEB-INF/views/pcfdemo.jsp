@@ -139,7 +139,7 @@
 
 
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="//d3js.org/d3.v2.min.js?2.9.6"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
 <script src="resources/js/rainbowvis.js"></script>
 
 <script src="/resources/js/histograms.js"></script>
