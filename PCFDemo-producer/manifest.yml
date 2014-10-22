@@ -1,0 +1,12 @@
+---
+applications:
+- name: pcfdemo-producer
+  memory: 512M 
+  instances: 1
+  host: pcfdemo-producer-${random-word}
+  path: src
+  timeout: 90
+  env:
+   JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
+  services:
+   - demorabbit

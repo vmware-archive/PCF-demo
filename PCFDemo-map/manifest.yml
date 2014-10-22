@@ -1,0 +1,10 @@
+---
+applications:
+- name: pcfdemo-map
+  memory: 512M 
+  instances: 1
+  host: pcfdemo-map-${random-word}
+  path: ./target/pcfdemo-map.war
+  timeout: 90
+  env:
+   JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
