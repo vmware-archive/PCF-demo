@@ -1,4 +1,4 @@
-package com.pivotal.example.xd;
+package io.pivotal.cf.sample;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -151,18 +151,7 @@ public class HeatMap implements Serializable {
  
     }	
 	
-    public static void main(String[] args) {
-        String hexForRGBConversion = "0x00073f07";
-        String whiteHexForRGBConversion = "0x00ffffff";
  
-        String rgbToHex="85,123,85";
-        
-        /** Convert from HEX to RGB */
-        //System.out.println("RGB: "+convertHexToRGB(hexForRGBConversion));
-        //System.out.println("RGB: "+convertHexToRGB(whiteHexForRGBConversion));
-         
-        System.out.println("Hex: "+convertRGBToHex(rgbToHex));
-    }	
     
     
 }

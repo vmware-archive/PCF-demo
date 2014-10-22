@@ -1,10 +1,12 @@
-package com.pivotal.example.xd;
+package io.pivotal.cf.sample;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.pivotal.example.xd.controller.OrderController;
 import com.rabbitmq.client.QueueingConsumer;
+
+import io.pivotal.cf.sample.controller.OrderController;
+
 import java.util.logging.Logger;
 
 

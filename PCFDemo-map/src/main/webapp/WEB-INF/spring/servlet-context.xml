@@ -81,7 +81,7 @@
 
 <!-- 	
 	<beans profile="hawq">
-		<context:component-scan base-package="com.pivotal.example.xd.controller" />
+		<context:component-scan base-package="io.pivotal.cf.sample.controller" />
 
 
 	</beans>

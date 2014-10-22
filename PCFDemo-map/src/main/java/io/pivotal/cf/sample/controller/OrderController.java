@@ -1,4 +1,9 @@
-package com.pivotal.example.xd.controller;
+package io.pivotal.cf.sample.controller;
+
+import io.pivotal.cf.sample.HeatMap;
+import io.pivotal.cf.sample.Order;
+import io.pivotal.cf.sample.OrderConsumer;
+import io.pivotal.cf.sample.RabbitClient;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,10 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.pivotal.example.xd.HeatMap;
-import com.pivotal.example.xd.Order;
-import com.pivotal.example.xd.OrderConsumer;
-import com.pivotal.example.xd.RabbitClient;
 
 /**
  * Handles requests for the application home page.

@@ -1,4 +1,4 @@
-package com.pivotal.example.xd;
+package io.pivotal.cf.sample;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
