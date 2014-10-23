@@ -25,7 +25,7 @@
 	
 
 
-	<context:component-scan base-package="com.pivotal"/>
+	<context:component-scan base-package="io.pivotal"/>
     <mvc:annotation-driven/>
     <mvc:resources mapping="/resources/**" location="/resources/" />
     
