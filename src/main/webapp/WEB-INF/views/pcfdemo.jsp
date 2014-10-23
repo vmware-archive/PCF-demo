@@ -110,6 +110,9 @@
 	<div id="maincontent" style="overflow-y: scroll;">
 		<div align="center"> 
         <small>Instance hosted at &nbsp;<%=request.getLocalAddr() %>:<%=request.getLocalPort() %></small><br>
+        <c:if test="${vcap_app != null && !empty vcap_app}">
+        	<small>Instance Index &nbsp;<em>${vcap_app['instance_index']}</em></small><br>
+        </c:if>
 		<c:choose>
 			<c:when test="${rabbitURI != null}">
 				<small>Data being streamed from RabbitMQ</small>				
@@ -135,8 +138,8 @@
   		
 
 
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="http://d3js.org/d3.v2.min.js?2.9.6"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
 <script src="resources/js/rainbowvis.js"></script>
 
 <script src="/resources/js/histograms.js"></script>
