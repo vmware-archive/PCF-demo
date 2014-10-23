@@ -101,7 +101,6 @@
 	        </div>
 	        <div class="nav">
 	        	<input type="button" value="Orders US Heat Map" class="activate nav-link" >
-	        	<input type="button" value="Start Data Stream" class="activate nav-link" onclick="startStream();">
 	        	<input type="button" value="Kill App" class="activate nav-link" onclick="killApp();">
 	        </div>
 	    </div>
@@ -128,7 +127,7 @@
 	
     <div class="container">
         <div class="footer">
-          <div class="footer-text">©&nbsp;2014 Pivotal Software, Inc.  </div>
+          <div class="footer-text">Â©&nbsp;2014 Pivotal Software, Inc.  </div>
           <div class="footer-poweredby"><img src="resources/img/PoweredByPivotal.png" alt="Powered By Pivotal "></div>
 	    </div>
 	</div>  		
