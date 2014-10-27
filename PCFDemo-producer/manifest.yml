@@ -8,5 +8,3 @@ applications:
   timeout: 90
   env:
    JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
-  services:
-   - demorabbit
