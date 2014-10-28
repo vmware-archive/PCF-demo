@@ -28,17 +28,32 @@ public class OrderConsumer implements Runnable {
 		try{
 			QueueingConsumer consumer = client.consumeOrders();
 			while (true){
-		      QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		      
-		      String message = new String(delivery.getBody());   
-		      
-		      JSONObject obj = (JSONObject) parser.parse(message);
-		      
-		      Order order = new Order();
-		      order.setAmount(((Number)obj.get("amount")).intValue());
-		      order.setState((String)obj.get("state"));
-		     
-		      OrderController.registerOrder(order);
+				try{
+			      QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+			      
+			      String message = new String(delivery.getBody());   
+			      
+			      JSONObject obj = (JSONObject) parser.parse(message);
+			      
+			      Order order = new Order();
+			      order.setAmount(((Number)obj.get("amount")).intValue());
+			      order.setState((String)obj.get("state"));
+			     
+			      OrderController.registerOrder(order);
+				}
+				catch(Exception e){
+					LOG.warning(e.getMessage());
+					try{
+						Thread.sleep(500);
+					}
+					catch(Exception ex){}
+					// re-create the connection to the queue
+					try{
+						consumer = client.consumeOrders();
+					}
+					catch(Exception ex){LOG.warning(ex.getMessage());}
+				
+				}
 			}
 			
 		}
