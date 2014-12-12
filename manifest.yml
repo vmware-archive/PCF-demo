@@ -9,7 +9,7 @@ applications:
   env:
    JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
   services:
-   - rabbit
+   - myrabbit
 - name: pcfdemo-map
   memory: 512M 
   instances: 1
@@ -19,5 +19,5 @@ applications:
   env:
    JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
   services:
-   - rabbit
+   - myrabbit
 
