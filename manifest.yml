@@ -6,8 +6,6 @@ applications:
   host: pcfdemo-producer-${random-word}
   path: PCFDemo-producer/src
   timeout: 90
-  env:
-   JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
   services:
    - myrabbit
 - name: pcfdemo-map
@@ -16,8 +14,6 @@ applications:
   host: pcfdemo-map-${random-word}
   path: PCFDemo-map/target/pcfdemo-map.war
   timeout: 90
-  env:
-   JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
   services:
    - myrabbit
 
