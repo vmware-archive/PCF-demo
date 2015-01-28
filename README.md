@@ -16,11 +16,8 @@ A script for pushing to PWS is also provided, which will create a space called "
 <instructions based on PCF>
 
 $ cf api <your cf api>
-
 $ cf login 
-
 $ cf create-service p-rabbitmq standard myrabbit
-
 $ cf push
 
 
