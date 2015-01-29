@@ -22,4 +22,6 @@ Instructions based on PCF
 
 Remember:  free RabbitMQ service on PWS (a.k.a. "CloudAMQP" plan "lemur") is limited to 3 connections max. So, you can demo two instances of the map (still able to show self-healing and load-balancing) and one instance of the producer.
 
+For deploying this demo through Jenkins, see instructions here: https://github.com/Pivotal-Field-Engineering/PCF-demo/blob/micro-services/Deploy-microservices-CD.adoc
+
 Enjoy!!
