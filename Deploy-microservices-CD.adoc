@@ -2,18 +2,6 @@
 
 == Script 
 
-=== __1st Exercise: Developing microservices with Spring WebMVC and SpringBoot__
-
-* Clone the repository at https://github.com/Pivotal-Field-Engineering/PCF-demo, branch "micro-services"
-----
-git clone https://github.com/Pivotal-Field-Engineering/PCF-demo -b micro-services
-----
-* Analize the source code and identify the micro-services, the dependencies and how easy it is to create those.
-* Check against the 12 Factor App concepts you've learned and identify gaps.
-* If you want to make any changes, fork the repository, change your own copy and make a Pull Request.
-
-=== __2nd Exercise: CI pipeline__
-  
 * Login to a Jenkins server. 
 * Explore the existing projects, their build status and logs.
 * Now let's create a new CI pipeline for you. On the left menu, click "New Item".
