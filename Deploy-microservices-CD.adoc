@@ -1,0 +1,60 @@
+= Deploying microservices with Pivotal CF using a CI pipeline in Jenkins
+
+== Script 
+
+=== __1st Exercise: Developing microservices with Spring WebMVC and SpringBoot__
+
+* Clone the repository at https://github.com/Pivotal-Field-Engineering/PCF-demo, branch "micro-services"
+----
+git clone https://github.com/Pivotal-Field-Engineering/PCF-demo -b micro-services
+----
+* Analize the source code and identify the micro-services, the dependencies and how easy it is to create those.
+* Check against the 12 Factor App concepts you've learned and identify gaps.
+* If you want to make any changes, fork the repository, change your own copy and make a Pull Request.
+
+=== __2nd Exercise: CI pipeline__
+  
+* Login to a Jenkins server. 
+* Explore the existing projects, their build status and logs.
+* Now let's create a new CI pipeline for you. On the left menu, click "New Item".
+* Choose "Freestyle Project". Give it the name "microservices-bootcamp-<yourname>". Please use this convention so we can recycle these after the bootcamp.
+* On "Github project", enter "https://github.com/Pivotal-Field-Engineering/PCF-demo"
+* On source code management, click "GIT" and enter the following repository info:
+- Repository URL: https://github.com/Pivotal-Field-Engineering/PCF-demo
+- Branch: */micro-services
+* On "Build Triggers", select "Build when a change is pushed to GitHub"
+* If you have an artifactory server available:  On "Build Environment", select "Maven3-Artifactory Integration". Select your Artifactory Server. Click "Refresh Repositories" and select the following repositories: "ext-release-local" for releases and "ext-snapshot-local" for snapshots. Also select "Capture and publish build info". When demo'ing,  *don't* select "Deploy artifacts to Artifactory", as it would require additional storage space per deploy.
+* On "Build", setup as following:
+- Invoke Maven 3:  Root pom "PCFDemo-map/pom.xml", goal "install"
+- Execute Shell:
+----
+DEPLOYED_VERSION_CMD=$(CF_COLOR=false cf apps | grep 'mapUS.' | cut -d" " -f1)
+export BUILD_VERSION="1.2"
+export DEPLOYED_VERSION_CMD
+echo DEPLOYED_VERSION_CMD
+export ROUTE_VERSION="default"
+echo "Deployed Version: $DEPLOYED_VERSION"
+echo "Route Version: $ROUTE_VERSION"
+export API=http://<your_cf_api>
+
+cf api --skip-ssl-validation $API
+cf login -u <user> -p <password> -o <org> -s <space>
+
+cf create-service p-rabbitmq standard demo-rabbit
+
+cf push PCFDemo-producer -f PCFDemo-producer/manifest.yml --no-start 
+cf push PCFDemo-map -f PCFDemo-map/manifest.yml --no-start 
+
+cf bind-service PCFDemo-producer demo-rabbit
+cf bind-service PCFDemo-map demo-rabbit
+
+cf restart PCFDemo-producer
+cf restart PCFDemo-map
+----
+
+* If you'd like to add any additional steps (like smoke tests) to the build, add as a "Post Build Action".
+* Save changes.
+* Detail your new project. On the menu, click "Build now". 
+* As a new build starts, detail it and click on "Console Output" to see the build / deploy real-time logging info.
+* Do any troubleshoot needed until you have a clean build.
+* Congratulations! You have created your CI pipeline. 
