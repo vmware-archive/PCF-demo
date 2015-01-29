@@ -13,14 +13,14 @@ For convenience, a manifest which will push both micro-services at the same time
 
 A script for pushing to PWS is also provided, which will create a space called "pcf-demo", create the service required and push both micro-services to it.
 
-Instructions based on PCF
+Instructions for deployment on PCF
 - cf api [your cf api url]
 - cf login 
-- cf create-service p-rabbitmq standard myrabbit
+- cf create-service p-rabbitmq standard myrabbit (for PWS: "cf create-service cloudamqp lemur myrabbit")
 - cf push
 
 
-Remember:  free RabbitMQ service on PWS (a.k.a. "CloudAMQP" plan "lemur") is limited to 3 connections max. So, you can demo two instances of the map (still able to show self-healing and load-balancing) and one instance of the producer.
+Remember:  free RabbitMQ service on PWS (a.k.a. "CloudAMQP" plan "lemur") is limited to 3 connections max. For that, you can demo two instances of the map (still able to show self-healing and load-balancing) and one instance of the producer.
 
 For deploying this demo through Jenkins, see instructions here: https://github.com/Pivotal-Field-Engineering/PCF-demo/blob/micro-services/Deploy-microservices-CD.adoc
 
