@@ -1,6 +1,6 @@
 = Deploying microservices with Pivotal CF using a CI pipeline in Jenkins
 
-== Script 
+== Creating the Jenkins pipeline
 
 * Login to a Jenkins server. 
 * Explore the existing projects, their build status and logs.
@@ -46,3 +46,13 @@ cf restart PCFDemo-map
 * As a new build starts, detail it and click on "Console Output" to see the build / deploy real-time logging info.
 * Do any troubleshoot needed until you have a clean build.
 * Congratulations! You have created your CI pipeline. 
+
+== Demo
+
+* Clean-up your environment on Pivotal CF, to have an empty space to demo.
+* Login to Jenkins
+* Click on your project to detail
+* Click "build now". 
+* Check "Console output" as jenkins downloads the source code and deploys it to Pivotal CF.
+* Navigate back to Pivotal CF Web Console and show service created and app deployed. 
+* Demo the app
