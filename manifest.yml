@@ -10,7 +10,7 @@ applications:
    - myrabbit
 - name: pcfdemo-map
   memory: 512M 
-  instances: 1
+  instances: 2
   host: pcfdemo-map-${random-word}
   path: PCFDemo-map/target/pcfdemo-map.war
   timeout: 90
