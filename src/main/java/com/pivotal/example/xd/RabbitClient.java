@@ -48,7 +48,7 @@ public class RabbitClient {
 	    	Iterator<ServiceInfo> services = cloud.getServiceInfos().iterator();
 	    	while (services.hasNext()){
 	    		ServiceInfo svc = services.next();
-	    		if (svc instanceof RabbitServiceInfo){
+	    		if (svc instanceof RabbitServiceInfo && svc.getId().equals("myrabbitmq")){
 	    			RabbitServiceInfo rabbitSvc = ((RabbitServiceInfo)svc);	    			
 	    			rabbitURI=rabbitSvc.getUri();
 	    			try{
