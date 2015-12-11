@@ -21,7 +21,7 @@ import org.springframework.cloud.Cloud;
 import org.springframework.cloud.CloudException;
 import org.springframework.cloud.CloudFactory;
 import org.springframework.cloud.service.ServiceInfo;
-import org.springframework.cloud.service.common.RabbitServiceInfo;
+import org.springframework.cloud.service.common.AmqpServiceInfo;
 
 import com.pivotal.example.xd.controller.OrderController;
 import com.rabbitmq.client.ConnectionFactory;
@@ -48,8 +48,8 @@ public class RabbitClient {
 	    	Iterator<ServiceInfo> services = cloud.getServiceInfos().iterator();
 	    	while (services.hasNext()){
 	    		ServiceInfo svc = services.next();
-	    		if (svc instanceof RabbitServiceInfo && svc.getId().equals("myrabbitmq")){
-	    			RabbitServiceInfo rabbitSvc = ((RabbitServiceInfo)svc);	    			
+	    		if (svc instanceof AmqpServiceInfo){
+	    			AmqpServiceInfo rabbitSvc = ((AmqpServiceInfo)svc);	    			
 	    			rabbitURI=rabbitSvc.getUri();
 	    			try{
 	    				
