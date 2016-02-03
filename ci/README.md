@@ -72,14 +72,6 @@ according to your target environment.
 
 > Be sure to create the S3 buckets and your Cloud Foundry Org and Space before running your pipeline!
 
-## Setting your pipeline
-
-Now that you've got everything setup, it's time to set the pipeline in Concourse:
-
-```
-todo...
-```
-
 ## Executing Tasks Locally
 
 One of the great things about Concourse is the ability to run tasks locally before
@@ -91,3 +83,40 @@ For example, you can execute the unit tests like this:
 ```
 fly execute -c ci/tasks/unit.yml -i pcfdemo=.
 ```
+
+Of course, this works very well for tasks that run isolated without requiring any
+input from a previously executed task.  To run this next example, we need to mock
+up a few things that would normally be performed by other tasks in the pipeline:
+
+```
+~ » cd git
+~/git » mkdir ci-mock
+~/git » mkdir -p ci-mock/build/pcfdemo/target && touch ci-mock/build/pcfdemo/target/pcf-demo.war
+~/git » mkdir -p ci-mock/version && echo "1.0.0-rc.1" > ci-mock/version/number
+~/git » fly execute -c PCF-demo/ci/tasks/prepare-build.yml -i pcfdemo=PCF-demo -i build=ci-mock/build -i version=ci-mock/version
+executing build 69
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 12.1M    0 12.1M    0     0  22.8M      0 --:--:-- --:--:-- --:--:-- 22.8M  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 58.8M    0 58.8M    0     0  26.7M      0 --:--:--  0:00:02 --:--:-- 26.7M
+100 10240    0 10240    0     0  11078      0 --:--:-- --:--:-- --:--:-- 11070
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 10240    0 10240    0     0  5047k      0 --:--:-- --:--:-- --:--:--  9.7M
+initializing with docker:///java#8
+running pcfdemo/ci/tasks/rename-artifact.sh -d build/pcfdemo/target -v version/number
+srcDir=build/pcfdemo/target
+Renaming build/pcfdemo/target/pcf-demo.war to pcf-demo-1.0.0-rc.1.war
+succeeded```
+
+## Setting your pipeline
+
+Now that you've got everything setup, and run your tasks locally to make sure they
+work, it's time to set the pipeline in Concourse:
+
+```
+fly set-pipeline -p pcfdemo -c ci/pipeline.yml -l ~/.concourse/pcfdemo-properties.yml
+```
+
+If you refresh the main page, you should now see the ```pcfdemo``` pipeline.
