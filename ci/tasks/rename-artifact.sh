@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 baseName="pcf-demo"
 srcDir=
@@ -10,9 +10,13 @@ while getopts "d:v:" opt; do
        ;;
     v) versionFile=$OPTARG
        ;;
+    ?) echo "?=$OPTARG"
+       ;;
   esac
 done
 shift $((OPTIND - 1))
+
+echo "srcDir=$srcDir"
 
 if [ ! -d "$srcDir" ]; then
   echo "missing source directory!"
@@ -20,11 +24,11 @@ if [ ! -d "$srcDir" ]; then
 fi
 
 if [ -f "$versionFile" ]; then
-  version=`cat versionFile`
+  version=`cat $versionFile`
   baseName="${baseName}-${version}"
 fi
 
-srcWar=`find $srcDir -name *.war`
+srcWar=`find $srcDir -name '*.war'`
 dstWar="${baseName}.war"
 
 echo "Renaming ${srcWar} to ${dstWar}"
