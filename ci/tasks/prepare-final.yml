@@ -6,4 +6,5 @@ inputs:
   - name: candidate-release
   - name: version
 run:
-  path: pcfdemo/ci/tasks/rename-artifact.sh -d candidate-release -v version/number
+  path: pcfdemo/ci/tasks/rename-artifact.sh
+  args: ["-d", "candidate-release", "-v", "version/number"]
