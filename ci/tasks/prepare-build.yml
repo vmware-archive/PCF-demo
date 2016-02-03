@@ -1,6 +1,6 @@
 ---
 platform: linux
-image: docker:///busybox
+image: docker:///java#8
 inputs:
   - name: pcfdemo
   - name: build
