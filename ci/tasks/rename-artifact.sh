@@ -34,5 +34,3 @@ dstWar="${baseName}.war"
 echo "Renaming ${srcWar} to ${dstWar}"
 
 cp ${srcWar} ${dstWar}
-
-ls -al
