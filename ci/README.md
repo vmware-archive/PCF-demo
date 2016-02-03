@@ -72,7 +72,27 @@ according to your target environment.
 
 > Be sure to create the S3 buckets and your Cloud Foundry Org and Space before running your pipeline!
 
+## Setting your pipeline
+
+Now that you've got everything setup, and run your tasks locally to make sure they
+work, it's time to set the pipeline in Concourse:
+
+```
+fly set-pipeline -p pcfdemo -c ci/pipeline.yml -l ~/.concourse/pcfdemo-properties.yml
+```
+
+If you refresh the main page, you should now see the ```pcfdemo``` pipeline. By
+default, all new pipelines are in a paused state.  To unpause it, you can either
+reveal the pipelines sidebar via the hamburger icon in the top left and press
+"play", or run:
+
+```
+fly unpause-pipeline -p pcfdemo
+```
+
 ## Executing Tasks Locally
+
+So now you have a working pipeline, but you'd probably like to make changes to it.
 
 One of the great things about Concourse is the ability to run tasks locally before
 committing your code (saves all those debug commits when something is configured
@@ -83,6 +103,11 @@ For example, you can execute the unit tests like this:
 ```
 fly execute -c ci/tasks/unit.yml -i pcfdemo=.
 ```
+
+Your files will be uploaded and the task will be executed with them. The working
+directory name will be used as the input name. If they do not match, you must
+specify -i name=. instead, where name is the input name from the task
+configuration.  In the above example, the '.' refers to our current 'PCF-demo' directory.
 
 Of course, this works very well for tasks that run isolated without requiring any
 input from a previously executed task.  To run this next example, we need to mock
@@ -108,15 +133,5 @@ initializing with docker:///java#8
 running pcfdemo/ci/tasks/rename-artifact.sh -d build/pcfdemo/target -v version/number
 srcDir=build/pcfdemo/target
 Renaming build/pcfdemo/target/pcf-demo.war to pcf-demo-1.0.0-rc.1.war
-succeeded```
-
-## Setting your pipeline
-
-Now that you've got everything setup, and run your tasks locally to make sure they
-work, it's time to set the pipeline in Concourse:
-
+succeeded
 ```
-fly set-pipeline -p pcfdemo -c ci/pipeline.yml -l ~/.concourse/pcfdemo-properties.yml
-```
-
-If you refresh the main page, you should now see the ```pcfdemo``` pipeline.
