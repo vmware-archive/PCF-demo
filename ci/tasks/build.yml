@@ -1,0 +1,7 @@
+---
+platform: linux
+image: docker:///java#8
+inputs:
+  - name: pcfdemo
+run:
+  path: pcfdemo/ci/tasks/build.sh

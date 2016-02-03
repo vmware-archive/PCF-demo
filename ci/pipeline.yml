@@ -1,0 +1,127 @@
+---
+resources:
+  - name: pcfdemo
+    type: git
+    source:
+      uri: {{github-uri}}
+      branch: master
+
+  - name: version
+    type: semver
+    source:
+      bucket: {{s3-bucket-version}}
+      initial_version: 1.0.0
+      key: current-version
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+
+  - name: candidate-release
+    type: s3
+    source:
+      bucket: {{s3-bucket-release-candidates}}
+      regexp: pcfdemo-(.*).war
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+
+  - name: final-release
+    type: s3
+    source:
+      bucket: {{s3-bucket-releases}}
+      regexp: pcfdemo-(.*).war
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+
+  - name: cf
+    type: cf
+    source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-org}}
+      space: {{cf-space}}
+      skip_cert_check: true
+
+jobs:
+  - name: unit-test
+    public: true
+    plan:
+      - get: pcfdemo
+        trigger: true
+      - task: unit
+        file: pcfdemo/ci/tasks/unit.yml
+
+  - name: build-artifact
+    serial_groups: [ version ]
+    plan:
+      - get: pcfdemo
+        passed: [ unit-test ]
+        trigger: true
+      - get: version
+        params: { pre: rc }
+      - task: build
+        file: pcfdemo/ci/tasks/build.yml
+      - task: prepare-build
+        file: pcfdemo/ci/tasks/prepare-build.yml
+      - put: candidate-release
+        params: { from: prepare-build/pcf-demo-(.*).war }
+      - put: version
+        params: { file: version/number }
+
+  - name: integration-test
+    serial: true
+    plan:
+      - get: candidate-release
+        trigger: true
+        passed: [ build-artifact ]
+      - get: pcfdemo
+        passed: [ build-artifact ]
+      - get: version
+        passed: [ build-artifact ]
+      - task: prepare-integration
+        file: pcfdemo/ci/tasks/prepare-integration.yml
+      - put: cf
+        params:
+          manifest: pcfdemo/manifest.yml
+          path: prepare-integration/pcf-demo.war
+      - task: integration
+        file: pcfdemo/ci/tasks/integration.yml
+
+  - name: ship-it
+    serial_groups: [ version ]
+    plan:
+      - get: candidate-release
+        passed: [ integration-test ]
+      - get: pcfdemo
+        passed: [ integration-test ]
+      - get: version
+        params: { bump: final }
+      - task: prepare-final
+        file: pcfdemo/ci/tasks/prepare-final.yml
+      - put: final-release
+        params: { from: prepare-final/pcf-demo-(.*).war }
+      - put: version
+        params: { file: version/number }
+
+  - name: major
+    serial_groups: [ version ]
+    plan:
+      - put: version
+        params: { bump: major, pre: rc }
+
+  - name: minor
+    serial_groups: [ version ]
+    plan:
+      - put: version
+        params: { bump: minor, pre: rc }
+
+  - name: patch
+    serial_groups: [ version ]
+    plan:
+      - get: version
+        passed: [ ship-it ]
+        trigger: true
+      - put: version
+        params: { bump: patch, pre: rc }

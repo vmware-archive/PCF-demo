@@ -1,0 +1,8 @@
+---
+platform: linux
+image: docker:///busybox
+inputs:
+  - name: pcfdemo
+  - name: candidate-release
+run:
+  path: pcfdemo/ci/tasks/rename-artifact.sh -d candidate-release
