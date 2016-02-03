@@ -1,15 +1,15 @@
 github-uri: https://github.com/.../PCF-demo.git
 s3-access-key-id: SAMPLEDF99FSWEBF9DW9
 s3-secret-access-key: sampleaxfdpiA98FG8u7ahd08Sdgf8AFG8gh8S0F
-s3-endpoint: https://s3.amazonaws.com/
+s3-endpoint: s3.amazonaws.com
 s3-bucket-version: pcfdemo-releases
 s3-bucket-releases: pcfdemo-releases
 s3-bucket-release-candidates: pcfdemo-release-candidates
-cf-api: https://api.run.pivotal.io
-cf-username: clark@griswold.com
-cf-password: walleyWorld
-cf-org: myuser-org
-cf-space: testing
+cf-api: https://api.local.micropcf.io
+cf-username: admin
+cf-password: admin
+cf-org: micropcf-org
+cf-space: micropcf-space
 github-private-key: |
   -----BEGIN RSA PRIVATE KEY-----
   SamplejjkKiRxGdgR8p5kZJj0AFgdWYa3OT2snIXnN5+/p7j13PSkseUcrAFyokc
