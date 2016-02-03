@@ -106,8 +106,8 @@ fly execute -c ci/tasks/unit.yml -i pcfdemo=.
 
 Your files will be uploaded and the task will be executed with them. The working
 directory name will be used as the input name. If they do not match, you must
-specify -i name=. instead, where name is the input name from the task
-configuration.  In the above example, the '.' refers to our current 'PCF-demo' directory.
+specify ```-i name=.``` instead, where name is the input name from the task
+configuration.
 
 Of course, this works very well for tasks that run isolated without requiring any
 input from a previously executed task.  To run this next example, we need to mock
