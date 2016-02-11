@@ -1,9 +1,16 @@
 ---
 platform: linux
+
 image: docker:///java#8
+
 inputs:
   - name: pcfdemo
   - name: candidate-release
+
+outputs:
+  - name: candidate-release
+    path: .
+
 run:
   path: pcfdemo/ci/tasks/rename-artifact.sh
   args: [ "-d", "candidate-release" ]
