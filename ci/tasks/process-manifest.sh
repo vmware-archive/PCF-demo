@@ -52,8 +52,7 @@ if [ ! -z "$path" ]; then
   if [ -d "$path" ]; then
     path=`find $path -name '*.war'`
   fi
-  sed -i -- "s|path: .*$|path: ${path}|g" $outputManifest
+  sed -i -- "s|path: .*$|path: ../${path}|g" $outputManifest
 fi
 
 cat $outputManifest
-cd ..
