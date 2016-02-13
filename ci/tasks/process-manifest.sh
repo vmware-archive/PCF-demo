@@ -52,9 +52,9 @@ if [ ! -z "$path" ]; then
   if [ -d "$path" ]; then
     path=`find $path -name '*.war'`
   fi
-  # ugly hack: cf-resource is running in the directory of the last run task, so
-  # we need to ../ to the parent directory to find the war file.
-  sed -i -- "s|path: .*$|path: ../${path}|g" $outputManifest
+  outputDir=`dirname $outputManifest`
+  cp $path $outputDir
+  sed -i -- "s|path: .*$|path: ${path}|g" $outputManifest
 fi
 
 cat $outputManifest
