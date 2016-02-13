@@ -4,7 +4,7 @@ resources:
     type: git
     source:
       uri: {{github-uri}}
-      branch: master
+      branch: {{github-branch}}
 
   - name: version
     type: semver
@@ -52,6 +52,10 @@ jobs:
         trigger: true
       - task: unit
         file: pcfdemo/ci/tasks/unit.yml
+        config:
+          params: &MAVENPARAMS
+            MAVEN_OPTS: {{maven-opts}}
+            MAVEN_CONFIG: {{maven-config}}
 
   - name: build-artifact
     serial_groups: [ version ]
@@ -63,6 +67,9 @@ jobs:
         params: { pre: rc }
       - task: build
         file: pcfdemo/ci/tasks/build.yml
+        config:
+          params:
+            <<: *MAVENPARAMS
       - task: prepare-build
         file: pcfdemo/ci/tasks/prepare-build.yml
       - put: candidate-release
@@ -88,6 +95,9 @@ jobs:
           path: prepare-integration/pcf-demo.war
       - task: integration
         file: pcfdemo/ci/tasks/integration.yml
+        config:
+          params:
+            <<: *MAVENPARAMS
 
   - name: ship-it
     serial_groups: [ version ]
