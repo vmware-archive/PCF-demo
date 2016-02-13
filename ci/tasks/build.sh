@@ -4,3 +4,6 @@
 export MAVEN_BASEDIR=pcfdemo
 
 pcfdemo/mvnw --file=pcfdemo/pom.xml clean package
+
+# Copy war file to concourse output folder
+cp pcfdemo/target/*.war build/.
