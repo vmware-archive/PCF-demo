@@ -13,6 +13,7 @@ cf-username: admin
 cf-password: admin
 cf-org: micropcf-org
 cf-space: micropcf-space
+cf-manifest-host: pcfdemo-ci
 github-private-key: |
   -----BEGIN RSA PRIVATE KEY-----
   SamplejjkKiRxGdgR8p5kZJj0AFgdWYa3OT2snIXnN5+/p7j13PSkseUcrAFyokc

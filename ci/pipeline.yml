@@ -89,10 +89,11 @@ jobs:
         passed: [ build-artifact ]
       - task: prepare-integration
         file: pcfdemo/ci/tasks/prepare-integration.yml
+        params:
+          CF_MANIFEST_HOST: {{cf-manifest-host}}
       - put: cf
         params:
-          manifest: pcfdemo/manifest.yml
-          path: prepare-integration/pcf-demo.war
+          manifest: prepare-integration/manifest.yml
       - task: integration
         file: pcfdemo/ci/tasks/integration.yml
         config:
