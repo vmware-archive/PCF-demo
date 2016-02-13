@@ -8,6 +8,13 @@ inputs:
   - name: build
   - name: version
 
+outputs:
+  - name: prepare-build
+
 run:
   path: pcfdemo/ci/tasks/rename-artifact.sh
-  args: [ "-d", "build", "-v", "version/number" ]
+  args: [
+    "--input-dir", "build",
+    "--output-dir", "prepare-build",
+    "--version-file", "version/number"
+  ]

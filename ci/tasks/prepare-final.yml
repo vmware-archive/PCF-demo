@@ -9,9 +9,12 @@ inputs:
   - name: version
 
 outputs:
-  - name: candidate-release
-    path: .
+  - name: prepare-final
 
 run:
   path: pcfdemo/ci/tasks/rename-artifact.sh
-  args: ["-d", "candidate-release", "-v", "version/number"]
+  args: [
+    "--input-dir", "candidate-release",
+    "--output-dir", "prepare-final",
+    "--version-file", "version/number"
+  ]

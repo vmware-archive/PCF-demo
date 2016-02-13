@@ -8,9 +8,11 @@ inputs:
   - name: candidate-release
 
 outputs:
-  - name: candidate-release
-    path: .
+  - name: prepare-integration
 
 run:
   path: pcfdemo/ci/tasks/rename-artifact.sh
-  args: [ "-d", "candidate-release" ]
+  args: [
+    "--input-dir", "candidate-release",
+    "--output-dir", "prepare-integration",
+  ]

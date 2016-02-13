@@ -1,25 +1,40 @@
 #!/bin/bash
 
 baseName="pcf-demo"
-srcDir=
-versionFile=
 
-while getopts "d:v:" opt; do
-  case $opt in
-    d) srcDir=$OPTARG
-       ;;
-    v) versionFile=$OPTARG
-       ;;
-    ?) echo "?=$OPTARG"
-       ;;
+inputDir=     # required
+outputDir=    # required
+versionFile=  # optional
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    -i | --input-dir )
+      inputDir=$2
+      shift
+      ;;
+    -o | --output-dir )
+      outputDir=$2
+      shift
+      ;;
+    -v | --version-file )
+      versionFile=$2
+      shift
+      ;;
+    * )
+      echo "Unrecognized option: $1" 1>&2
+      exit 1
+      ;;
   esac
+  shift
 done
-shift $((OPTIND - 1))
 
-echo "srcDir=$srcDir"
+if [ ! -d "$inputDir" ]; then
+  echo "missing input directory!"
+  exit 1
+fi
 
-if [ ! -d "$srcDir" ]; then
-  echo "missing source directory!"
+if [ ! -d "$outputDir" ]; then
+  echo "missing output directory!"
   exit 1
 fi
 
@@ -28,9 +43,9 @@ if [ -f "$versionFile" ]; then
   baseName="${baseName}-${version}"
 fi
 
-srcWar=`find $srcDir -name '*.war'`
-dstWar="${baseName}.war"
+inputWar=`find $inputDir -name '*.war'`
+outputWar="${outputDir}/${baseName}.war"
 
-echo "Renaming ${srcWar} to ${dstWar}"
+echo "Renaming ${inputWar} to ${outputWar}"
 
-cp ${srcWar} ${dstWar}
+cp ${inputWar} ${outputWar}
