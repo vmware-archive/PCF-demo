@@ -56,3 +56,4 @@ if [ ! -z "$path" ]; then
 fi
 
 cat $outputManifest
+cd ..
