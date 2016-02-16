@@ -70,8 +70,6 @@ jobs:
         config:
           params:
             <<: *MAVENPARAMS
-#      - task: prepare-build
-#        file: pcfdemo/ci/tasks/prepare-build.yml
       - put: candidate-release
         params: { from: build/pcf-demo-(.*).war }
       - put: version

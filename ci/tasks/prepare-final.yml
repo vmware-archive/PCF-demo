@@ -12,7 +12,7 @@ outputs:
   - name: prepare-final
 
 run:
-  path: pcfdemo/ci/tasks/rename-artifact.sh
+  path: pcfdemo/ci/tasks/prepare-final.sh
   args: [
     "--input-dir", "candidate-release",
     "--output-dir", "prepare-final",
