@@ -1,9 +1,26 @@
 ---
 platform: linux
+
 image: docker:///java#8
+
+params:
+  CF_MANIFEST_HOST:
+
 inputs:
   - name: pcfdemo
   - name: candidate-release
+  - name: version
+
+outputs:
+  - name: prepare-integration
+
 run:
-  path: pcfdemo/ci/tasks/rename-artifact.sh
-  args: [ "-d", "candidate-release" ]
+  path: pcfdemo/ci/tasks/prepare-integration.sh
+  args: [
+    --input-dir, candidate-release,
+    --output-dir, prepare-integration,
+    --version-file, version/number,
+    --input-manifest, pcfdemo/manifest.yml,
+    --artifactId, pcf-demo,
+    --packaging, war
+  ]
