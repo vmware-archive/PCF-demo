@@ -4,13 +4,13 @@ resources:
     type: git
     source:
       uri: {{github-uri}}
-      branch: master
+      branch: {{github-branch}}
 
   - name: version
     type: semver
     source:
       bucket: {{s3-bucket-version}}
-      initial_version: 1.0.0-rc.1
+      initial_version: 1.0.0-rc.0
       key: current-version
       access_key_id: {{s3-access-key-id}}
       secret_access_key: {{s3-secret-access-key}}
@@ -52,6 +52,10 @@ jobs:
         trigger: true
       - task: unit
         file: pcfdemo/ci/tasks/unit.yml
+        config:
+          params: &MAVENPARAMS
+            MAVEN_OPTS: {{maven-opts}}
+            MAVEN_CONFIG: {{maven-config}}
 
   - name: build-artifact
     serial_groups: [ version ]
@@ -63,10 +67,11 @@ jobs:
         params: { pre: rc }
       - task: build
         file: pcfdemo/ci/tasks/build.yml
-      - task: prepare-build
-        file: pcfdemo/ci/tasks/prepare-build.yml
+        config:
+          params:
+            <<: *MAVENPARAMS
       - put: candidate-release
-        params: { from: prepare-build/pcf-demo-(.*).war }
+        params: { from: build/pcf-demo-(.*).war }
       - put: version
         params: { file: version/number }
 
@@ -82,12 +87,17 @@ jobs:
         passed: [ build-artifact ]
       - task: prepare-integration
         file: pcfdemo/ci/tasks/prepare-integration.yml
+        config:
+          params:
+            CF_MANIFEST_HOST: {{cf-manifest-host}}
       - put: cf
         params:
-          manifest: pcfdemo/manifest.yml
-          path: prepare-integration/pcf-demo.war
+          manifest: prepare-integration/manifest.yml
       - task: integration
         file: pcfdemo/ci/tasks/integration.yml
+        config:
+          params:
+            <<: *MAVENPARAMS
 
   - name: ship-it
     serial_groups: [ version ]

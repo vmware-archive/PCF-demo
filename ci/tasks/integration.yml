@@ -1,7 +1,13 @@
 ---
 platform: linux
+
 image: docker:///java#8
+
 inputs:
   - name: pcfdemo
+
 run:
   path: pcfdemo/ci/tasks/integration.sh
+  args: [
+    --input-dir, pcfdemo
+  ]

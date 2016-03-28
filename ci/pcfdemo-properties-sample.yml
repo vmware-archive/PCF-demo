@@ -1,15 +1,19 @@
 github-uri: https://github.com/.../PCF-demo.git
-s3-access-key-id: SAMPLEDF99FSWEBF9DW9
-s3-secret-access-key: sampleaxfdpiA98FG8u7ahd08Sdgf8AFG8gh8S0F
+github-branch: master
+s3-access-key-id: SAMPLEDF99FSWEBF9DW9  # AWS or S3 compatible access key id
+s3-secret-access-key: sampleaxfdpiA98FG8u7ahd08Sdgf8AFG8gh8S0F  # AWS or S3 compatible secret access key
 s3-endpoint: s3.amazonaws.com
 s3-bucket-version: pcfdemo-releases
 s3-bucket-releases: pcfdemo-releases
 s3-bucket-release-candidates: pcfdemo-release-candidates
+maven-opts: # -Xms256m -Xmx512m
+maven-config: # -s path/to/settings.xml
 cf-api: https://api.local.micropcf.io
 cf-username: admin
 cf-password: admin
 cf-org: micropcf-org
 cf-space: micropcf-space
+cf-manifest-host: pcfdemo-ci
 github-private-key: |
   -----BEGIN RSA PRIVATE KEY-----
   SamplejjkKiRxGdgR8p5kZJj0AFgdWYa3OT2snIXnN5+/p7j13PSkseUcrAFyokc

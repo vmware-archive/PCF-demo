@@ -1,7 +1,17 @@
 ---
 platform: linux
+
 image: docker:///java#8
+
+params:
+  MAVEN_OPTS:
+  MAVEN_CONFIG:
+
 inputs:
   - name: pcfdemo
+
 run:
   path: pcfdemo/ci/tasks/unit.sh
+  args: [
+    --input-dir, pcfdemo
+  ]
