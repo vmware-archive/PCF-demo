@@ -9,7 +9,8 @@ The end-to-end scenario is to monitor a Git repository for commits, and when new
 commits are detected, run its unit tests.
 
 If the unit tests pass, the pipeline will then create a new release candidate
-artifact with automated versioning, which then will be placed in a S3 bucket. From there, the pipeline will run integration tests against the release candidate.
+artifact with automated versioning, which then will be placed in a S3 bucket. From
+there, the pipeline will run integration tests against the release candidate.
 
 These tasks comprise the automated continuous integration part of the pipeline. Once
 a candidate-release is properly vetted, the "ship-it" task can be manually invoked to
@@ -30,7 +31,7 @@ day trial, or [MicroPCF](https://micropcf.io) to run locally)
 If you have an existing Concourse CI system setup, skip to the next section.
 
 > NOTE: The pipeline and scripts used in this project have been tested on Concourse
-**v0.72.1**.  If you experience any problems, please ensure you are running a current version of Concourse, and remember to `fly sync` !
+**v0.75.0**.  If you experience any problems, please ensure you are running a current version of Concourse, and remember to `fly sync` !
 
 Otherwise if you just want to quickly start up Concourse on your local machine you
 can use the pre-built [Vagrant](https://www.vagrantup.com/) box:
