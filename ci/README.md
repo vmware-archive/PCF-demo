@@ -24,7 +24,7 @@ Here are a few things you'll need:
 - Concourse (see [Concourse Setup](#concourse-setup) to run locally)
 - [Amazon S3](https://aws.amazon.com/s3/pricing/) compatible storage (use the real thing or try [fake-s3](https://hub.docker.com/r/lphoward/fake-s3/) to run locally)
 - Cloud Foundry (see [Pivotal Web Services](http://run.pivotal.io/) for a free 60
-day trial, or [MicroPCF](https://micropcf.io) to run locally)
+day trial, or [PCF Dev](http://pcfdev.io) to run locally)
 
 ## Concourse Setup
 
