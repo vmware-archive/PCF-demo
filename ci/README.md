@@ -24,14 +24,14 @@ Here are a few things you'll need:
 - Concourse (see [Concourse Setup](#concourse-setup) to run locally)
 - [Amazon S3](https://aws.amazon.com/s3/pricing/) compatible storage (use the real thing or try [fake-s3](https://hub.docker.com/r/lphoward/fake-s3/) to run locally)
 - Cloud Foundry (see [Pivotal Web Services](http://run.pivotal.io/) for a free 60
-day trial, or [MicroPCF](https://micropcf.io) to run locally)
+day trial, or [PCF Dev](http://pcfdev.io) to run locally)
 
 ## Concourse Setup
 
 If you have an existing Concourse CI system setup, skip to the next section.
 
 > NOTE: The pipeline and scripts used in this project have been tested on Concourse
-**v0.75.0**.  If you experience any problems, please ensure you are running a current version of Concourse, and remember to `fly sync` !
+**v1.0.0**.  If you experience any problems, please ensure you are running a current version of Concourse, and remember to `fly -t (alias) sync` !
 
 Otherwise if you just want to quickly start up Concourse on your local machine you
 can use the pre-built [Vagrant](https://www.vagrantup.com/) box:
@@ -52,7 +52,7 @@ binary and put it in your ```$PATH```. This can be done in one fell swoop with
 
 ## Fork it
 
-You should be working with your own forked copy of the PCF-demo repository so you
+You should be working with your own [forked copy](https://help.github.com/articles/fork-a-repo/) of the PCF-demo repository so you
 can do cool things like watch the pipeline kick-off when you push changes to your
 repo.
 
@@ -68,7 +68,7 @@ source code:
 
 ```
 mkdir ~/.concourse
-cp pcfdemo-properties-sample.yml ~/.concourse/pcfdemo-properties.yml
+cp ci/pcfdemo-properties-sample.yml ~/.concourse/pcfdemo-properties.yml
 chmod 600 ~/.concourse/pcfdemo-properties.yml
 ```
 
@@ -80,19 +80,25 @@ according to your target environment.
 ## Setting your pipeline
 
 Now that you've got everything setup, and run your tasks locally to make sure they
-work, it's time to set the pipeline in Concourse:
+work, it's time to set the pipeline in Concourse.  First, let's make sure we have
+targetted and logged into our Concourse installation:
 
 ```
-fly set-pipeline -p pcfdemo -c ci/pipeline.yml -l ~/.concourse/pcfdemo-properties.yml
+fly -t lite login -c http://192.168.100.4:8080/
 ```
 
-If you refresh the main page, you should now see the ```pcfdemo``` pipeline. By
+Next we can set our pipeline:
+```
+fly -t lite set-pipeline -p pcfdemo -c ci/pipeline.yml -l ~/.concourse/pcfdemo-properties.yml
+```
+
+If you refresh the Concourse [main page](http://192.168.100.4:8080/), you should now see the ```pcfdemo``` pipeline. By
 default, all new pipelines are in a paused state.  To unpause it, you can either
 reveal the pipelines sidebar via the hamburger icon in the top left and press
 "play", or run:
 
 ```
-fly unpause-pipeline -p pcfdemo
+fly -t lite unpause-pipeline -p pcfdemo
 ```
 
 ## Executing Tasks Locally
@@ -106,7 +112,7 @@ differently between your local and remote setup).
 For example, you can execute the unit tests like this:
 
 ```
-fly execute -c ci/tasks/unit.yml -i pcfdemo=.
+fly -t lite execute -c ci/tasks/unit.yml -i pcfdemo=.
 ```
 
 Your files will be uploaded and the task will be executed with them. The working
