@@ -1,14 +1,14 @@
-github-uri: https://github.com/.../PCF-demo.git
+github-uri: https://github.com/.../PCF-demo.git  # Change this to your fork
 github-branch: master
 s3-access-key-id: SAMPLEDF99FSWEBF9DW9  # AWS or S3 compatible access key id
 s3-secret-access-key: sampleaxfdpiA98FG8u7ahd08Sdgf8AFG8gh8S0F  # AWS or S3 compatible secret access key
 s3-endpoint: s3.amazonaws.com
-s3-bucket-version: pcfdemo-releases
-s3-bucket-releases: pcfdemo-releases
-s3-bucket-release-candidates: pcfdemo-release-candidates
+s3-bucket-version: pcfdemo-releases  # Create and change this to your own S3 bucket
+s3-bucket-releases: pcfdemo-releases  # Create and change this to your own S3 bucket
+s3-bucket-release-candidates: pcfdemo-release-candidates  # Create and change this to your own S3 bucket
 maven-opts: # -Xms256m -Xmx512m
 maven-config: # -s path/to/settings.xml
-cf-api: https://api.local.micropcf.io
+cf-api: https://api.local.micropcf.io  # Change the following to match your Cloud Foundry environment
 cf-username: admin
 cf-password: admin
 cf-org: micropcf-org
