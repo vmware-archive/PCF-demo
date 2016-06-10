@@ -46,9 +46,9 @@ The web server will be running at http://192.168.100.4:8080
 Next, download the Fly CLI from the main page where there are links to binaries
 for common platforms.
 
-> If you're on Linux or OS X, you will have to ```chmod +x``` the downloaded
-binary and put it in your ```$PATH```. This can be done in one fell swoop with
-(example) ```install fly /usr/local/bin```.
+> If you're on Linux or OS X, you will have to `chmod +x` the downloaded
+binary and put it in your `$PATH`. This can be done in one fell swoop with
+(example) `install fly /usr/local/bin`.
 
 ## Fork it
 
