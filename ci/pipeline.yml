@@ -20,7 +20,7 @@ resources:
     type: s3
     source:
       bucket: {{s3-bucket-release-candidates}}
-      regexp: pcfdemo-(.*).war
+      regexp: pcf-demo-(.*).war
       access_key_id: {{s3-access-key-id}}
       secret_access_key: {{s3-secret-access-key}}
       endpoint: {{s3-endpoint}}
@@ -29,7 +29,7 @@ resources:
     type: s3
     source:
       bucket: {{s3-bucket-releases}}
-      regexp: pcfdemo-(.*).war
+      regexp: pcf-demo-(.*).war
       access_key_id: {{s3-access-key-id}}
       secret_access_key: {{s3-secret-access-key}}
       endpoint: {{s3-endpoint}}
@@ -69,7 +69,7 @@ jobs:
         params:
           <<: *MAVENPARAMS
       - put: candidate-release
-        params: { from: build/pcf-demo-(.*).war }
+        params: { file: build/pcf-demo-*.war }
       - put: version
         params: { file: version/number }
 
@@ -107,7 +107,7 @@ jobs:
       - task: prepare-final
         file: pcfdemo/ci/tasks/prepare-final.yml
       - put: final-release
-        params: { from: prepare-final/pcf-demo-(.*).war }
+        params: { file: prepare-final/pcf-demo-*.war }
       - put: version
         params: { file: version/number }
 
