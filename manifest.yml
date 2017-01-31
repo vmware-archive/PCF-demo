@@ -3,5 +3,5 @@ applications:
 - name: pcfdemo
   memory: 512M 
   instances: 1
-  host: pcfdemo-yourname
+  host: pcfdemo-kl
   path: ./target/pcfdemo.war
