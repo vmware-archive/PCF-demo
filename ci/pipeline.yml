@@ -5,6 +5,7 @@ resources:
     source:
       uri: {{github-uri}}
       branch: {{github-branch}}
+
   - name: version
     type: semver
     source:
